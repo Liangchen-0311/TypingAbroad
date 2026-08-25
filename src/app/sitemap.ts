@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
 
+export const dynamic = "force-static";
+
 const routes = [
   { path: "", changeFrequency: "weekly", priority: 1 },
   { path: "/practice", changeFrequency: "weekly", priority: 0.9 },

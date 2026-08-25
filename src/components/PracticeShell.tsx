@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, FileText, Shuffle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArticleSelector } from "./ArticleSelector";
 import { ResultsView } from "./ResultsView";
@@ -10,7 +10,9 @@ import { articles, getArticle, getNextArticle } from "@/lib/articles";
 import { getActivePracticeArticle, getSessions, saveActivePracticeArticle, saveSession } from "@/lib/storage";
 import type { ArticleLength, Difficulty, Exam, TypingResult } from "@/lib/types";
 
-export function PracticeShell({ initialArticleId }: { initialArticleId?: string }) {
+export function PracticeShell() {
+  const searchParams = useSearchParams();
+  const initialArticleId = searchParams.get("article") ?? undefined;
   const initial = getArticle(initialArticleId);
   const router = useRouter();
   const [exam, setExam] = useState<Exam>(initial.exam);

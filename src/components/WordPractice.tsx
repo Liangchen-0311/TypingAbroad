@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight, BookMarked, RefreshCw, Shuffle, SkipForward } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TypingText } from "./TypingText";
@@ -70,7 +71,9 @@ function createSeededRandom(seed: number) {
   };
 }
 
-export function WordPractice({ initialSource }: { initialSource?: WordPracticeSource }) {
+export function WordPractice() {
+  const searchParams = useSearchParams();
+  const initialSource = searchParams.get("source") === "mistakes" ? "mistakes" as const : undefined;
   const [source, setSource] = useState<WordPracticeSource>(initialSource ?? "common");
   const [savedItems, setSavedItems] = useState<SavedVocabulary[]>([]);
   const [category, setCategory] = useState<CategoryFilter>("All");
