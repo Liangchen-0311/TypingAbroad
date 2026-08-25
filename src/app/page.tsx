@@ -7,7 +7,7 @@ export default function HomePage() {
     <div className="home-page page-shell">
       <section className="home-hero">
         <div>
-          <h1>Type faster. Write better.</h1>
+          <h1><span>Type faster.</span><span>Write better.</span></h1>
           <p>Practice typing with original IELTS, TOEFL, and academic English passages.</p>
           <Link className="primary-button home-hero__cta" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
         </div>

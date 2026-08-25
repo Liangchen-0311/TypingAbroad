@@ -469,6 +469,10 @@ button:disabled,
   font-weight: 700;
 }
 
+.home-hero h1 span {
+  display: block;
+}
+
 .home-hero p {
   max-width: 54ch;
   color: var(--color-neutral);
