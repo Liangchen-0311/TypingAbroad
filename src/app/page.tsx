@@ -9,7 +9,7 @@ export default function HomePage() {
         <div>
           <h1>Type faster. Write better English.</h1>
           <p>Practice typing with original IELTS, TOEFL, and academic English passages.</p>
-          <Link className="primary-button" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
+          <Link className="primary-button home-hero__cta" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
         </div>
         <div className="hero-categories" aria-label="Available practice categories">
           <span>IELTS Writing</span><span>TOEFL Writing</span><span>Academic English</span><span>Vocabulary</span>
