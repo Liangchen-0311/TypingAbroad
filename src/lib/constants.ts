@@ -1,7 +1,7 @@
 import type { TypingPreferences } from "./types";
 
 export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || "TypeAbroad";
-export const SITE_TAGLINE = "Type better. Write better. Study abroad.";
+export const SITE_TAGLINE = "Type better. Write better.";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://typeabroad.com").replace(/\/$/, "");
 
 export const DEFAULT_PREFERENCES: TypingPreferences = {
