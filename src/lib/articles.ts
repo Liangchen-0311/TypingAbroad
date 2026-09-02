@@ -307,24 +307,31 @@ The effect of technology consequently depends on the habits and systems surround
     },
   ),
   other(
-    "toefl-integrated-003",
-    "Restoring a Coastal Wetland",
+    "toefl-email-003",
+    "Requesting a Short Assignment Extension",
     "TOEFL",
-    "Integrated Writing",
-    "Environment",
-    "Hard",
-    `The reading argues that restoring the Greyhaven wetland would be too expensive, would increase mosquito populations, and would reduce land available for farming. The lecturer disputes each concern. First, she explains that the construction estimate includes optional visitor facilities, whereas the essential work of reopening water channels would cost much less. Maintenance would also be limited because tidal water, rather than electric pumps, would sustain the restored system. A regional conservation fund has already offered to cover part of the initial work.
+    "Write an Email",
+    "Education",
+    "Medium",
+    `Subject: Request for a Two-Day Extension on the Research Summary
 
-Second, tidal movement would prevent the stagnant pools in which mosquitoes usually breed. Nearby restored wetlands have, in fact, reported fewer mosquitoes because fish returned and consumed the larvae. The reading assumes that every wet area provides suitable breeding conditions, but the lecturer distinguishes a functioning salt marsh from an isolated pool of fresh water.
+Dear Professor Chen,
 
-Finally, the lecturer notes that much of the proposed site produces poor harvests because salt has already entered the soil. Farmers would receive compensation and technical support to improve more productive fields inland. The new wetland could also reduce storm damage by absorbing waves before they reach roads and remaining farms. This protective benefit is absent from the reading's calculation. She adds that restored habitat may support commercial fish populations beyond the project boundary, creating a further economic benefit for coastal residents. The lecture therefore presents restoration not as a loss of useful farmland but as a way to protect the coast while concentrating agriculture in more suitable areas.`,
+I am writing to ask whether I may submit my research summary on Friday instead of Wednesday. I had planned to finish it this weekend, but I became ill and was unable to work for two days. I have completed the reading and drafted the introduction, so I only need additional time to organize the evidence and revise the final section.
+
+I understand that the class schedule is important, and I do not want to delay the peer-review activity. If an extension is possible, I can send my current draft on Wednesday and bring the completed version to class on Friday. I would also be happy to complete an alternative task if that arrangement would be easier.
+
+Thank you for considering my request.
+
+Sincerely,
+Maya Patel`,
     {
       vocabulary: [
-        vocabulary("stagnant", "not flowing or moving", "Mosquitoes often breed in stagnant water."),
-        vocabulary("larvae", "the young form of an insect", "Fish consumed the mosquito larvae."),
+        vocabulary("extension", "additional time allowed to complete something", "The student requested a two-day extension."),
+        vocabulary("arrangement", "a plan or agreement for a particular situation", "The proposed arrangement would protect the class schedule."),
       ],
-      collocations: ["disputes each concern", "receive compensation", "suitable areas"],
-      sentenceStructures: [structure("The lecturer disputes each concern.", "This overview sentence prepares the reader for a point-by-point response.", "The lecturer disputes each claim presented in the reading.")],
+      collocations: ["submit my research summary", "current draft", "considering my request"],
+      sentenceStructures: [structure("If an extension is possible, I can send my current draft on Wednesday.", "The conditional sentence proposes a practical compromise politely.", "If X is possible, I can Y.")],
     },
   ),
   other(
@@ -342,17 +349,28 @@ Finally, the lecturer notes that much of the proposed site produces poor harvest
     },
   ),
   other(
-    "toefl-integrated-005",
-    "Why the Norvale Settlement Declined",
+    "toefl-email-005",
+    "Solving a Group Project Scheduling Conflict",
     "TOEFL",
-    "Integrated Writing",
-    "History",
+    "Write an Email",
+    "Education",
     "Hard",
-    `The reading attributes the decline of the Norvale settlement to repeated military attacks. According to the text, damaged walls and abandoned houses show that residents left after a violent conflict. The lecturer offers a different interpretation. She points out that the wall damage occurred over several decades and is consistent with seasonal floods rather than weapons. Moreover, household records show a gradual decrease in grain storage before the settlement was abandoned. This evidence supports the theory that changing rainfall made local agriculture unreliable. The lecturer also explains that valuable metal objects remained in several houses. Residents escaping an attack would probably have taken such portable goods, while a community relocating slowly might leave heavy or ceremonial items behind. Thus, the physical evidence suggests a prolonged environmental decline rather than a sudden military defeat.`,
+    `Subject: A New Plan for Completing Our Presentation
+
+Hi Jordan,
+
+I saw your message about being unable to attend our group meeting on Thursday. Since the presentation is due next Monday, I think we should adjust the plan rather than postpone all of the work.
+
+Could you record a short explanation of your survey results by Friday afternoon? I can add the recording to our shared slides, and Elena can review the transitions between sections. The three of us could then meet online for twenty minutes on Sunday to rehearse and make final changes. This would let everyone contribute without requiring you to miss your work shift.
+
+Please let me know whether this schedule is realistic. If recording the explanation is difficult, you could send detailed notes and I will present that section for you. I want to make sure the workload remains fair while keeping the project on time.
+
+Best,
+Alex`,
     {
-      vocabulary: [vocabulary("prolonged", "continuing for a long time", "The evidence suggests a prolonged decline.")],
-      collocations: ["attributes the decline", "consistent with", "portable goods"],
-      sentenceStructures: [structure("Residents escaping an attack would probably have taken such portable goods, while a community relocating slowly might leave heavy items behind.", "‘While’ contrasts the predictions of two explanations.", "A would probably ..., while B might ...")],
+      vocabulary: [vocabulary("rehearse", "to practise before a performance or presentation", "The group will rehearse online on Sunday.")],
+      collocations: ["adjust the plan", "shared slides", "keep the project on time"],
+      sentenceStructures: [structure("If recording the explanation is difficult, you could send detailed notes and I will present that section for you.", "The conditional offers a clear backup plan without sounding demanding.", "If doing X is difficult, you could Y and I will Z.")],
     },
   ),
   ...additionalToeflArticles,

@@ -1,35 +1,41 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Keyboard, ScanText } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { HomePracticePreview } from "@/components/HomePracticePreview";
 
 export default function HomePage() {
   return (
     <div className="home-page page-shell">
       <section className="home-hero">
-        <div>
+        <div className="home-hero__copy">
           <h1><span>Type faster.</span><span>Write better.</span></h1>
-          <p>Practice typing with original IELTS, TOEFL, and academic English passages.</p>
+          <p>Type through high-scoring IELTS and TOEFL model essays—not random words or generic quotes.</p>
           <Link className="primary-button home-hero__cta" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
         </div>
-        <div className="hero-categories" aria-label="Available practice categories">
-          <span>IELTS Writing</span><span>TOEFL Writing</span><span>Academic English</span><span>Vocabulary</span>
+
+        <div className="home-writing-proof">
+          <div className="home-writing-proof__intro">
+            <h2>High-scoring writing, built into every session.</h2>
+            <p>Sentence structure, vocabulary, and argument flow stay in context as you type.</p>
+          </div>
+          <dl aria-label="Writing practice collection">
+            <div>
+              <dt>IELTS</dt>
+              <dd><strong>High-scoring model essays</strong><span>Writing Task 1 and Task 2</span></dd>
+            </div>
+            <div>
+              <dt>TOEFL</dt>
+              <dd><strong>High-scoring sample responses</strong><span>Write an Email and Academic Discussion</span></dd>
+            </div>
+            <div>
+              <dt>Language</dt>
+              <dd><strong>Academic English in context</strong><span>Vocabulary, collocations, and patterns</span></dd>
+            </div>
+          </dl>
+          <Link className="text-link" href="/library">Explore the writing library <ArrowRight aria-hidden="true" /></Link>
         </div>
       </section>
 
       <HomePracticePreview />
-
-      <section className="learning-argument">
-        <div className="learning-argument__intro">
-          <h2>A typing test that leaves language behind.</h2>
-          <p>Every passage is written as learning material. When the timer stops, the vocabulary, collocations, and sentence patterns remain.</p>
-          <Link className="text-link" href="/library">Browse the article library <ArrowRight aria-hidden="true" /></Link>
-        </div>
-        <div className="learning-rail">
-          <div><Keyboard aria-hidden="true" /><strong>Typing practice</strong><span>WPM, accuracy, consistency, and error positions.</span></div>
-          <div><ScanText aria-hidden="true" /><strong>English input</strong><span>Natural academic sentences instead of shuffled word lists.</span></div>
-          <div><BookOpen aria-hidden="true" /><strong>Writing study</strong><span>Useful language extracted from the passage you just typed.</span></div>
-        </div>
-      </section>
     </div>
   );
 }

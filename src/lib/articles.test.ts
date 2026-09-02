@@ -8,6 +8,14 @@ describe("article library", () => {
     expect(articles.filter((article) => article.exam === "Academic English")).toHaveLength(5);
   });
 
+  it("uses the current TOEFL writing task types", () => {
+    const toeflArticles = articles.filter((article) => article.exam === "TOEFL");
+
+    expect(toeflArticles.filter((article) => article.taskType === "Write an Email")).toHaveLength(9);
+    expect(toeflArticles.filter((article) => article.taskType === "Academic Discussion")).toHaveLength(11);
+    expect(toeflArticles.some((article) => article.taskType === "Integrated Writing")).toBe(false);
+  });
+
   it("uses a unique id and title for every passage", () => {
     expect(new Set(articles.map((article) => article.id)).size).toBe(articles.length);
     expect(new Set(articles.map((article) => article.title)).size).toBe(articles.length);

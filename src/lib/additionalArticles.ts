@@ -313,25 +313,32 @@ export const additionalToeflArticles: Article[] = [
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-008",
-    title: "Can Coral Nurseries Restore a Reef?",
+    id: "toefl-email-008",
+    title: "Recommending an International Student Event",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "Biology",
-    difficulty: "Hard",
-    text: `The reading argues that coral nurseries can restore the damaged Maren Reef quickly. It claims that nursery-grown fragments have high survival rates, that fast-growing coral will rebuild habitat, and that local tourism can finance the project. The lecturer considers these conclusions too optimistic.
+    taskType: "Write an Email",
+    topic: "Campus Life",
+    difficulty: "Easy",
+    text: `Subject: Recommendation for Next Month's Student Event
 
-First, survival in a protected nursery does not predict survival after coral is moved to warmer open water. A recent trial lost most fragments during a single heat event. Second, the species that grows fastest has a simple shape and supports fewer fish than the slow-growing corals that once dominated the reef. Covering the seabed with one species may increase coral area without restoring the former ecosystem.
+Dear Ms. Rivera,
 
-Finally, tourism revenue changes sharply from season to season. Dive operators have offered equipment and volunteers, but not the stable funding required for years of monitoring. The lecturer does not reject nurseries completely. Instead, she presents them as one limited tool that must be combined with water-quality controls, diverse species, and long-term public support.`,
+Thank you for asking club members to suggest an event for new international students. I recommend organizing a conversation and culture exchange in the student center.
+
+Participants could join small tables, introduce a tradition from their home region, and discuss a different campus topic every fifteen minutes. This format would give new students an easy way to meet people without requiring a formal presentation. The club could provide name tags, simple discussion questions, and light refreshments. We should also invite several returning students who can answer practical questions about classes and campus services.
+
+Friday evening would probably attract the most participants because fewer students have classes then. I would be happy to help prepare the discussion cards and welcome guests at the entrance.
+
+Best regards,
+Nora`,
     learning: notes(
-      "fragments",
-      "small pieces broken or taken from a larger whole",
-      "The nursery grows small coral fragments.",
-      ["survival rates", "heat event", "stable funding"],
-      "Covering the seabed with one species may increase coral area without restoring the former ecosystem.",
-      "The sentence separates a simple measure from the deeper objective.",
-      "Doing X may increase A without restoring B.",
+      "participants",
+      "people who take part in an activity",
+      "The event could attract many participants.",
+      ["culture exchange", "practical questions", "light refreshments"],
+      "I recommend organizing a conversation and culture exchange in the student center.",
+      "The sentence gives a direct recommendation while maintaining a polite tone.",
+      "I recommend organizing X because it would Y.",
     ),
   }),
   createAdditionalArticle({
@@ -353,25 +360,32 @@ Finally, tourism revenue changes sharply from season to season. Dive operators h
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-010",
-    title: "How Desert Bees Navigate",
+    id: "toefl-email-010",
+    title: "Reporting a Dormitory Maintenance Problem",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "Biology",
-    difficulty: "Hard",
-    text: `The reading proposes that desert bees return to their nests mainly by following the position of the sun. Three observations appear to support this solar-navigation theory. The lecturer argues that the evidence instead points to a combination of landmarks and scent.
+    taskType: "Write an Email",
+    topic: "Campus Life",
+    difficulty: "Medium",
+    text: `Subject: Heating Problem in Cedar Hall, Room 314
 
-The reading first notes that bees leave the nest in different directions as the sun moves. The lecturer explains that flower locations also change during the day, so departure direction does not reveal the method used to return. Second, researchers once placed a screen over a nesting area and found that bees became disoriented. According to the lecturer, the screen hid nearby rocks and plants in addition to the sky, making the result ambiguous.
+Dear Housing Office,
 
-Finally, the reading describes bees arriving near the correct nest even after being transported in dark boxes. New experiments show that those bees search in wide circles until they approach familiar ground. They then fly directly toward the entrance, where a distinctive colony scent provides the final cue. Thus, sunlight may contribute to a rough sense of direction, but it cannot by itself explain the bees' precise return.`,
+I am writing to report a problem with the heater in Room 314 of Cedar Hall. It turns on for a few minutes and then stops, even when the room temperature is well below the setting on the control panel. My roommates and I first noticed the problem on Monday, and resetting the unit has not solved it.
+
+The room becomes particularly cold at night, so we would appreciate an inspection as soon as possible. At least one of us will be available after 3:00 p.m. on Wednesday and Thursday. If a technician needs to enter at another time, please email us in advance so that we can secure our belongings and arrange access.
+
+Could you also let us know when we should expect the repair? Thank you for your help.
+
+Sincerely,
+Daniel Kim`,
     learning: notes(
-      "ambiguous",
-      "open to more than one interpretation",
-      "The screen experiment produced an ambiguous result.",
-      ["position of the sun", "became disoriented", "final cue"],
-      "Sunlight may contribute to a rough sense of direction, but it cannot by itself explain the bees' precise return.",
-      "The concession allows a limited role while rejecting the full claim.",
-      "X may contribute to A, but it cannot by itself explain B.",
+      "inspection",
+      "a careful examination to identify a problem",
+      "The residents requested an inspection of the heater.",
+      ["control panel", "arrange access", "expect the repair"],
+      "If a technician needs to enter at another time, please email us in advance.",
+      "The conditional request explains what action is needed and why.",
+      "If X needs to happen, please Y in advance.",
     ),
   }),
   createAdditionalArticle({
@@ -393,25 +407,32 @@ Finally, the reading describes bees arriving near the correct nest even after be
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-012",
-    title: "Why the Port of Bellara Lost Trade",
+    id: "toefl-email-012",
+    title: "Asking a Librarian for Research Help",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "History",
-    difficulty: "Hard",
-    text: `The reading claims that the ancient port of Bellara lost trade after a rival kingdom blocked its harbor. It cites a defensive wall, a sudden decline in imported pottery, and written complaints about foreign ships. The lecturer argues that environmental change offers a better explanation.
+    taskType: "Write an Email",
+    topic: "Research",
+    difficulty: "Medium",
+    text: `Subject: Help Finding Sources on Urban Agriculture
 
-The wall was constructed nearly a century before the decline and protected the town from seasonal flooding as well as attack. It therefore does not prove that a blockade occurred. The pottery evidence is also incomplete. Local workshops began producing similar containers at the same time, so fewer imported vessels may show substitution rather than reduced trade.
+Dear Ms. Lee,
 
-As for the written complaints, a new translation indicates that the ships were delayed by shallow water, not stopped by enemies. Sediment had gradually filled the northern harbor. Large vessels then moved to a deeper port twenty kilometers away, while smaller boats continued to serve Bellara. This pattern explains why regional trade survived even as the town's own warehouses became less important. The lecture therefore connects Bellara's decline to a changing coastline rather than military action.`,
+I am preparing a paper on whether community gardens improve access to fresh food in low-income neighborhoods. I have found several news articles, but my professor requires at least three peer-reviewed studies that compare conditions before and after a garden opens.
+
+I searched the university database using the terms urban agriculture, food access, and community health. Most of the results describe individual programs without measuring their effects over time. Could you recommend another database or a more precise set of search terms? Studies from any country would be useful as long as the methods are clearly explained.
+
+If possible, I would also like to meet for fifteen minutes this week to review my search strategy. I am available Tuesday morning or Wednesday after 2:00 p.m. Thank you for any guidance you can provide.
+
+Best regards,
+Sofia Martinez`,
     learning: notes(
-      "substitution",
-      "the replacement of one thing with another",
-      "Local pottery may explain the substitution of imported vessels.",
-      ["defensive wall", "written complaints", "changing coastline"],
-      "Fewer imported vessels may show substitution rather than reduced trade.",
-      "The sentence offers a different interpretation of the same evidence.",
-      "A decline in X may show A rather than B.",
+      "peer-reviewed",
+      "evaluated by experts in the same academic field",
+      "The assignment requires peer-reviewed studies.",
+      ["search terms", "search strategy", "clearly explained"],
+      "Could you recommend another database or a more precise set of search terms?",
+      "The modal question makes a specific request politely.",
+      "Could you recommend X or a more precise Y?",
     ),
   }),
   createAdditionalArticle({
@@ -433,25 +454,32 @@ As for the written complaints, a new translation indicates that the ships were d
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-014",
-    title: "Reintroducing Wolves to Pine Valley",
+    id: "toefl-email-014",
+    title: "Inviting a Classmate to a Study Group",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "Ecology",
-    difficulty: "Hard",
-    text: `The reading predicts that returning wolves to Pine Valley would restore vegetation, control an oversized deer population, and increase tourism. The lecturer says that each benefit is possible but that the reading treats an uncertain experiment as a guaranteed result.
+    taskType: "Write an Email",
+    topic: "Education",
+    difficulty: "Easy",
+    text: `Subject: Biology Study Group on Thursday
 
-Deer numbers are high, yet wolves may follow easier prey outside the valley during winter. Hunters and severe weather already cause large yearly changes, so researchers cannot assume that wolf predation will stabilize the herd. Vegetation may not recover quickly either. Many riverbanks have lost fertile soil, and young trees will still face drought even if fewer deer eat them.
+Hi Sam,
 
-The lecturer also challenges the tourism claim. Wildlife visitors could bring revenue, but nearby ranchers may face costs if livestock protection is inadequate. A successful program would require compensation, tracking, and staff who respond rapidly when wolves approach farms. These measures are expensive and are missing from the reading's estimate. The lecture concludes that reintroduction should be judged through a limited, monitored trial rather than promoted as an automatic solution to several unrelated problems.`,
+A few students from our biology class are meeting in the library on Thursday evening to prepare for next week's midterm. Would you like to join us?
+
+We plan to review the cell division diagrams first and then compare answers to the practice questions Professor Harris posted. Each person will bring one topic that they find difficult, so we can spend more time on the areas that need the most attention. The meeting will begin at 6:30 p.m. in Study Room 4 and should last about ninety minutes.
+
+If Thursday does not work for you, I can send you our notes afterward. Please let me know by Wednesday because the room allows only six people.
+
+Best,
+Lena`,
     learning: notes(
-      "predation",
-      "the act of one animal hunting another",
-      "Wolf predation may not stabilize the deer herd.",
-      ["fertile soil", "livestock protection", "monitored trial"],
-      "Each benefit is possible, but the reading treats an uncertain experiment as a guaranteed result.",
-      "The sentence concedes possibility while criticizing certainty.",
-      "X is possible, but the claim treats A as B.",
+      "midterm",
+      "an examination held near the middle of a course",
+      "The class is preparing for next week's midterm.",
+      ["practice questions", "study room", "review the diagrams"],
+      "If Thursday does not work for you, I can send you our notes afterward.",
+      "The conditional keeps the invitation helpful even if the recipient cannot attend.",
+      "If X does not work for you, I can Y.",
     ),
   }),
   createAdditionalArticle({
@@ -473,25 +501,32 @@ The lecturer also challenges the tourism claim. Wildlife visitors could bring re
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-016",
-    title: "Could Brighter Clouds Cool the Coast?",
+    id: "toefl-email-016",
+    title: "Responding to a Volunteer Schedule Change",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "Climate Science",
-    difficulty: "Hard",
-    text: `The reading supports a proposal to spray fine sea salt above coastal clouds so that they reflect more sunlight. It argues that the method uses a natural material, can be stopped quickly, and would protect coral reefs from extreme heat. The lecturer warns that these points understate the uncertainty.
+    taskType: "Write an Email",
+    topic: "Community",
+    difficulty: "Medium",
+    text: `Subject: Re: New Start Time for Saturday's River Cleanup
 
-Although sea salt is natural, producing particles of the required size demands specialized ships and large amounts of energy. Emissions from those vessels could offset part of the cooling benefit. Stopping the spray is also simple only in a mechanical sense. If a region relied on repeated cooling for years, a sudden end could expose ecosystems to a rapid temperature increase.
+Dear Mr. Okafor,
 
-Finally, cloud changes would not remain neatly above one reef. Winds might alter rainfall in another coastal area, and current models cannot predict that effect precisely. Cooler water could reduce heat stress for coral, but it would not address pollution or ocean acidity. The lecturer therefore recommends small atmospheric studies rather than immediate deployment. The technique may become useful, but the reading has not shown that its regional risks are controllable.`,
+Thank you for letting volunteers know that Saturday's cleanup will now begin at 7:00 a.m. Unfortunately, the first campus bus does not reach Riverside Park until 7:40, so several student volunteers may be unable to arrive on time.
+
+Would it be possible for our group to take responsibility for sorting supplies at the student center before traveling to the park? We could prepare gloves, bags, and safety materials on Friday evening, then join the cleanup when the bus arrives. Another option would be to arrange one pickup near campus if a project vehicle is available.
+
+There are eight students in our group, and all of us still want to participate. Please let me know which solution would be more useful. I can confirm everyone's attendance and organize the supply team today.
+
+Sincerely,
+Ethan Wu`,
     learning: notes(
-      "deployment",
-      "the act of putting a system into active use",
-      "The lecturer opposes immediate deployment of the technique.",
-      ["reflect sunlight", "cooling benefit", "regional risks"],
-      "Stopping the spray is also simple only in a mechanical sense.",
-      "The qualification distinguishes physical control from wider consequences.",
-      "Doing X is simple only in a narrow sense.",
+      "participate",
+      "to take part in an activity",
+      "All eight students still want to participate.",
+      ["sorting supplies", "arrange a pickup", "confirm attendance"],
+      "Would it be possible for our group to take responsibility for sorting supplies?",
+      "The question proposes a solution respectfully instead of only describing a problem.",
+      "Would it be possible for us to take responsibility for X?",
     ),
   }),
   createAdditionalArticle({
@@ -513,25 +548,34 @@ Finally, cloud changes would not remain neatly above one reef. Winds might alter
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-018",
-    title: "The Case for Deep-Sea Mining",
+    id: "toefl-email-018",
+    title: "Requesting an Internship Schedule Adjustment",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "Environment",
+    taskType: "Write an Email",
+    topic: "Work",
     difficulty: "Hard",
-    text: `The reading claims that collecting mineral nodules from the deep ocean would cause less damage than mining on land. It says that the seabed contains few living organisms, that disturbed areas will recover quickly, and that ocean minerals are essential for clean-energy technology. The lecturer disputes all three arguments.
+    text: `Subject: Request to Adjust My Tuesday Internship Hours
 
-Recent surveys have found diverse animals living both on and beneath the nodules. Because many species have not yet been identified, current estimates probably understate the ecosystem's complexity. Recovery is also uncertain. Tracks left by experimental equipment several decades ago remain visible, and slow-growing organisms have not returned to their former numbers.
+Dear Ms. Bennett,
 
-The lecturer finally notes that demand is not fixed. Battery designs are already reducing the amount of certain metals they require, while recycling can recover material from older devices. Land mining has serious costs, but that does not make deep-sea extraction harmless or necessary. Comparing only the excavation sites also ignores sediment clouds that could travel beyond a mining zone. The lecture concludes that commercial activity should wait until scientists understand these wider and potentially irreversible effects.`,
+I am writing about a scheduling conflict that begins next week. My university has moved a required research seminar from Thursday to Tuesday morning, which overlaps with the first two hours of my internship shift. Because the seminar is required for graduation, I cannot attend it at another time.
+
+Would it be possible for me to begin at 11:00 a.m. on Tuesdays and stay until 7:00 p.m.? This change would preserve my total weekly hours and allow me to remain available for the afternoon client meetings. I can also review urgent messages remotely before the seminar if the team needs an earlier response.
+
+The new seminar schedule will continue for six weeks. After that, I can return to my usual hours. I apologize for the short notice and am happy to discuss another arrangement that better supports the team's work.
+
+Thank you for considering this request.
+
+Best regards,
+Priya Shah`,
     learning: notes(
-      "irreversible",
-      "impossible to return to the previous condition",
-      "Scientists are concerned about irreversible effects.",
-      ["mineral nodules", "former numbers", "sediment clouds"],
-      "Land mining has serious costs, but that does not make deep-sea extraction harmless or necessary.",
-      "The sentence rejects a false choice between two damaging options.",
-      "A has serious costs, but that does not make B harmless.",
+      "overlaps",
+      "happens at the same time as another event",
+      "The seminar overlaps with the internship shift.",
+      ["scheduling conflict", "weekly hours", "short notice"],
+      "Would it be possible for me to begin at 11:00 a.m. on Tuesdays and stay until 7:00 p.m.?",
+      "The question requests a precise change while showing how lost time will be recovered.",
+      "Would it be possible for me to begin at X and stay until Y?",
     ),
   }),
   createAdditionalArticle({
@@ -553,25 +597,32 @@ The lecturer finally notes that demand is not fixed. Battery designs are already
     ),
   }),
   createAdditionalArticle({
-    id: "toefl-integrated-020",
-    title: "Planting Diverse Trees Along City Streets",
+    id: "toefl-email-020",
+    title: "Proposing a Safer Evening Bus Stop",
     exam: "TOEFL",
-    taskType: "Integrated Writing",
-    topic: "Urban Ecology",
-    difficulty: "Medium",
-    text: `The reading recommends planting a single fast-growing tree species throughout Larton because uniform trees are cheaper to purchase, easier to maintain, and create a consistent appearance. The lecturer argues that short-term convenience would produce long-term risk.
+    taskType: "Write an Email",
+    topic: "Transportation",
+    difficulty: "Hard",
+    text: `Subject: Proposal to Relocate the Evening Campus Bus Stop
 
-Buying one species in bulk may reduce the initial price, but a single pest could then damage nearly every street at once. Replacing thousands of mature trees would cost far more than purchasing a mixed group today. Maintenance is not necessarily simpler either. Trees of the same age often need pruning and replacement at the same time, creating sudden peaks in work.
+Dear Transportation Committee,
 
-The lecturer also challenges the visual argument. A diverse planting can still look coherent when planners repeat a limited palette of sizes and leaf colors. Different species bloom and lose their leaves at different times, giving streets shade and interest across a longer season. Diversity also allows each site to receive a tree suited to its soil, available space, and water supply. The lecture therefore favors a coordinated mixture over complete uniformity.`,
+I would like to suggest moving the evening bus pickup from the east parking lot to the main library entrance. The current stop is poorly lit and separated from occupied buildings after 9:00 p.m. Students who leave late classes often wait there alone, and the narrow sidewalk makes it difficult for drivers to see people approaching.
+
+The library entrance would be safer because it has bright lighting, security staff, and a covered waiting area. It is only a two-minute drive from the existing route, so the change should not significantly affect the timetable. The bus could continue using the east lot during the day, when traffic near the library is heavier, and move to the new stop after 8:00 p.m.
+
+Could the committee test this arrangement for one month and collect feedback from riders and drivers? I would be glad to help publicize the trial through the student association.
+
+Sincerely,
+Owen Brooks`,
     learning: notes(
-      "coherent",
-      "logically or visually connected as a whole",
-      "A diverse planting can still look coherent.",
-      ["initial price", "mature trees", "limited palette"],
-      "Short-term convenience would produce long-term risk.",
-      "The parallel time contrast summarizes the lecturer's objection.",
-      "Short-term A may produce long-term B.",
+      "relocate",
+      "to move something to a different place",
+      "The student proposed relocating the evening bus stop.",
+      ["covered waiting area", "existing route", "collect feedback"],
+      "Could the committee test this arrangement for one month and collect feedback from riders and drivers?",
+      "The request proposes a limited trial and a way to evaluate it.",
+      "Could X test this arrangement for Y and collect feedback from Z?",
     ),
   }),
 ];

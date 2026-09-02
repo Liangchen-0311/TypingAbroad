@@ -22,11 +22,17 @@ const compoundMeanings: Record<string, string> = {
   "slow-growing": "生长缓慢的",
   "small-group": "小组形式的",
   "solar-navigation": "太阳导航的",
+  "two-day": "为期两天的",
+  "two-minute": "两分钟的",
   "water-quality": "水质的",
   "well-planned": "规划良好的",
 };
 
 const passagePlaceNames = new Set(["bellara", "greyhaven", "larton", "norvale"]);
+const passagePersonNames = new Set([
+  "alex", "bennett", "brooks", "chen", "daniel", "elena", "ethan", "harris", "jordan", "kim", "lee", "lena",
+  "martinez", "maya", "nora", "okafor", "owen", "patel", "priya", "rivera", "sam", "shah", "sofia", "wu",
+]);
 
 export function normaliseLookupWord(word: string) {
   return word.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g, "").toLowerCase();
@@ -34,6 +40,8 @@ export function normaliseLookupWord(word: string) {
 
 export function getChineseWordMeaning(word: string) {
   const normalised = normaliseLookupWord(word);
+  if (passagePersonNames.has(normalised)) return "人名";
+
   const direct = writingWordMeanings.get(normalised)
     ?? passageWordMeanings.get(normalised)
     ?? compoundMeanings[normalised];

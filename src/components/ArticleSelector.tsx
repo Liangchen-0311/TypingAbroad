@@ -5,7 +5,7 @@ import { difficulties, lengths } from "@/lib/articles";
 
 const taskTypes: Record<Exam, string[]> = {
   IELTS: ["Writing Task 1", "Writing Task 2"],
-  TOEFL: ["Academic Discussion", "Integrated Writing"],
+  TOEFL: ["Write an Email", "Academic Discussion"],
   "Academic English": ["Technology", "Education", "Environment", "Economics", "Science", "Society", "Psychology"],
 };
 

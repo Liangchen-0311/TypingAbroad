@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: SITE_NAME,
   title: { default: `${SITE_NAME} — English typing practice`, template: `%s · ${SITE_NAME}` },
-  description: "Practice typing with original IELTS, TOEFL, and academic English passages.",
+  description: "Build typing fluency with high-scoring IELTS and TOEFL model essays.",
   keywords: ["IELTS typing", "TOEFL writing", "English typing practice", "academic English"],
   alternates: { canonical: "/" },
   openGraph: {

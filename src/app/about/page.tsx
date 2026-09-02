@@ -1,19 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { SITE_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "About", alternates: { canonical: "/about" } };
 
 export default function AboutPage() {
   return (
     <article className="about-page page-shell">
-      <header className="page-heading"><h1>Typing is the exercise. Better English is the outcome.</h1></header>
+      <header className="page-heading"><h1>Make typing disappear into the writing.</h1></header>
       <div className="about-prose">
-        <p>{SITE_NAME} is built for students preparing to study in English. It combines the focus of a minimal typing test with original IELTS, TOEFL, and academic passages.</p>
-        <p>Random words can train finger speed. Complete arguments train something more useful: the rhythm of academic sentences, the vocabulary that connects ideas, and the punctuation that makes complex writing readable.</p>
-        <p>The first version stays intentionally narrow. Practice works without an account, results remain on your device, and every completed passage opens a short learning layer. Account sync and AI explanations belong to a later phase; the keyboard experience comes first.</p>
-        <Link className="primary-button" href="/practice">Start a passage <ArrowRight aria-hidden="true" /></Link>
+        <p className="about-prose__lede">Many students learn to write English long before they learn to type it.</p>
+        <p>They may have the ideas, vocabulary, and writing skills—but slow typing can make it harder to express them under the time pressure of computer-based exams like the TOEFL and IELTS.</p>
+        <p><strong>Typing speed doesn’t make you a better writer. But slow typing can limit what you can write.</strong></p>
+
+        <section>
+          <h2>Why TypeAbroad exists</h2>
+          <p>TypeAbroad turns real English writing into typing practice.</p>
+          <p>Practice with TOEFL and IELTS writing samples, build familiarity with useful vocabulary and expressions, or bring your own passages.</p>
+          <p>The goal isn’t simply to type faster.</p>
+        </section>
+
+        <p className="about-prose__closing"><strong>It’s to make typing disappear into the writing.</strong></p>
+        <Link className="text-link" href="/practice">Start a passage <ArrowRight aria-hidden="true" /></Link>
       </div>
     </article>
   );
