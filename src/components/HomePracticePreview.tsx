@@ -4,24 +4,77 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowDown } from "lucide-react";
 
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (update: () => Promise<void> | void) => {
+    finished: Promise<void>;
+  };
+};
+
 export function HomePracticePreview() {
   const router = useRouter();
   const [isLeaving, setIsLeaving] = useState(false);
   const navigatingRef = useRef(false);
   const timeoutRef = useRef<number | null>(null);
 
+  const navigateToPractice = useCallback(() => {
+    return new Promise<void>((resolve) => {
+      if (document.querySelector(".practice-page")) {
+        resolve();
+        return;
+      }
+
+      let settled = false;
+      const observer = new MutationObserver(() => {
+        if (document.querySelector(".practice-page")) finish();
+      });
+      const fallbackTimer = window.setTimeout(() => finish(), 1200);
+
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        observer.disconnect();
+        window.clearTimeout(fallbackTimer);
+        resolve();
+      };
+
+      observer.observe(document.body, { childList: true, subtree: true });
+      router.push("/practice");
+    });
+  }, [router]);
+
   const openPractice = useCallback(() => {
     if (navigatingRef.current) return;
 
     navigatingRef.current = true;
     setIsLeaving(true);
-    document.querySelector<HTMLElement>(".home-page")?.classList.add("is-leaving");
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    timeoutRef.current = window.setTimeout(() => router.push("/practice"), reduceMotion ? 0 : 220);
-  }, [router]);
+    if (reduceMotion) {
+      router.push("/practice");
+      return;
+    }
+
+    const transitionDocument = document as ViewTransitionDocument;
+    if (transitionDocument.startViewTransition) {
+      const startViewTransition = transitionDocument.startViewTransition.bind(transitionDocument);
+      timeoutRef.current = window.setTimeout(() => {
+        try {
+          const transition = startViewTransition(navigateToPractice);
+          transition.finished.catch(() => undefined);
+        } catch {
+          router.push("/practice");
+        }
+      }, 120);
+      return;
+    }
+
+    document.querySelector<HTMLElement>(".home-page")?.classList.add("is-leaving");
+    timeoutRef.current = window.setTimeout(() => router.push("/practice"), 220);
+  }, [navigateToPractice, router]);
 
   useEffect(() => {
+    router.prefetch("/practice");
+
     let touchStartY: number | null = null;
 
     const interactionIsBlocked = () => Boolean(document.querySelector("dialog[open]"));
@@ -31,7 +84,12 @@ export function HomePracticePreview() {
     };
 
     const handleWheel = (event: WheelEvent) => {
-      if (event.ctrlKey || event.deltaY < 10 || interactionIsBlocked()) return;
+      if (
+        event.ctrlKey
+        || event.deltaY < 10
+        || Math.abs(event.deltaY) <= Math.abs(event.deltaX)
+        || interactionIsBlocked()
+      ) return;
       event.preventDefault();
       openPractice();
     };
@@ -70,7 +128,7 @@ export function HomePracticePreview() {
       window.removeEventListener("keydown", handleKeyDown);
       if (timeoutRef.current !== null) window.clearTimeout(timeoutRef.current);
     };
-  }, [openPractice]);
+  }, [openPractice, router]);
 
   return (
     <button
@@ -81,8 +139,13 @@ export function HomePracticePreview() {
       aria-label="Scroll or press to open Practice"
       onClick={openPractice}
     >
-      <span>Scroll to Practice</span>
-      <ArrowDown aria-hidden="true" />
+      <span className="home-scroll-cue__label">
+        <span className="home-scroll-cue__marker" aria-hidden="true" />
+        <span>Scroll to Practice</span>
+      </span>
+      <span className="home-scroll-cue__action" aria-hidden="true">
+        <ArrowDown />
+      </span>
     </button>
   );
 }
