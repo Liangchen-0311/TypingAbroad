@@ -233,7 +233,7 @@ export function WordPractice() {
       meaningZh: currentWord.meaningZh,
       example: currentWord.example,
       sourceArticleId: "word-practice",
-      sourceTitle: "Word practice",
+      sourceTitle: "Word Practice",
       sourceHref: "/words?source=mistakes",
       savedFromMistake: true,
       mistakeCount: 1,

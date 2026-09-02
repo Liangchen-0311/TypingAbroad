@@ -9,12 +9,12 @@ import { SettingsDialog } from "./SettingsDialog";
 import { ThemeToggle } from "./ThemeToggle";
 
 const links = [
-  ["Practice", "/practice"],
-  ["Words", "/words"],
-  ["Library", "/library"],
+  ["Essay Practice", "/practice"],
+  ["Word Practice", "/words"],
+  ["Essay Library", "/library"],
   ["Progress", "/progress"],
-  ["Vocabulary", "/vocabulary"],
-  ["About", "/about"],
+  ["Mistake Review", "/vocabulary"],
+  ["About Us", "/about"],
 ] as const;
 
 export function Navbar() {

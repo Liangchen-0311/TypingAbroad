@@ -105,26 +105,15 @@ export function ProgressDashboard() {
     <div className="progress-dashboard">
       <div className="segmented progress-view-switch" role="group" aria-label="Progress type">
         <button type="button" className={view === "articles" ? "is-active" : ""} onClick={() => setView("articles")}>
-          Article typing <small>{sessions.length}</small>
+          Essay Practice <small>{sessions.length}</small>
         </button>
         <button type="button" className={view === "words" ? "is-active" : ""} onClick={() => setView("words")}>
-          Word practice <small>{wordSessions.length}</small>
+          Word Practice <small>{wordSessions.length}</small>
         </button>
       </div>
 
       {view === "articles" ? (
         <>
-          <section className="progress-summary">
-            <div className="progress-primary"><span>Average WPM</span><strong>{average || "—"}</strong><small>{getLevel(average)}</small></div>
-            <dl>
-              <div><dt>Best WPM</dt><dd>{best || "—"}</dd></div>
-              <div><dt>Accuracy</dt><dd>{sessions.length ? `${accuracy.toFixed(1)}%` : "—"}</dd></div>
-              <div><dt>Practice time</dt><dd>{formatDuration(practiceSeconds)}</dd></div>
-              <div><dt>Articles</dt><dd>{sessions.length || "—"}</dd></div>
-              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(sessions.map((session) => session.createdAt))} days</dd></div>
-            </dl>
-          </section>
-
           {drafts.length > 0 && (
             <section className="progress-detail-section">
               <div className="section-title-row"><div><h2>Continue article practice</h2><p>Your unfinished passages are saved automatically.</p></div></div>
@@ -175,19 +164,37 @@ export function ProgressDashboard() {
             <div className="section-title-row"><div><h2>Recent article results</h2><p>Speed, accuracy and errors from your latest completed passages.</p></div></div>
             {sessions.length ? (
               <div className="progress-session-list">
-                {sessions.slice(0, 8).map((session) => (
-                  <article key={session.id} className="progress-session-row">
-                    <div><span>{formatSessionDate(session.createdAt)}</span><h3>{session.articleTitle}</h3></div>
-                    <dl>
-                      <div><dt>WPM</dt><dd>{session.wpm}</dd></div>
-                      <div><dt>Accuracy</dt><dd>{session.accuracy.toFixed(1)}%</dd></div>
-                      <div><dt>Errors</dt><dd>{session.errorCount}</dd></div>
-                      <div><dt>Time</dt><dd>{formatDuration(session.duration)}</dd></div>
-                    </dl>
-                  </article>
-                ))}
+                {sessions.slice(0, 8).map((session) => {
+                  const totalWords = articleById.get(session.articleId)?.wordCount;
+                  return (
+                    <article key={session.id} className="progress-session-row">
+                      <div><span>{formatSessionDate(session.createdAt)}</span><h3>{session.articleTitle}</h3></div>
+                      <dl>
+                        <div><dt>WPM</dt><dd>{session.wpm}</dd></div>
+                        <div><dt>Accuracy</dt><dd>{session.accuracy.toFixed(1)}%</dd></div>
+                        <div><dt>Errors</dt><dd>{session.errorCount}</dd></div>
+                        <div><dt>Time</dt><dd>{formatDuration(session.duration)}</dd></div>
+                      </dl>
+                      <div className="progress-session-completion">
+                        <div className="progress-session-track" role="progressbar" aria-label={`${session.articleTitle}: ${totalWords ?? "all"} of ${totalWords ?? "all"} words typed`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={100}><span /></div>
+                        <p>{totalWords ? `${totalWords} of ${totalWords} words typed` : "Passage completed"}</p>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             ) : <div className="chart-empty">Complete an article to see its result here.</div>}
+          </section>
+
+          <section className="progress-summary" aria-label="Essay practice summary">
+            <div className="progress-primary"><span>Average WPM</span><strong>{average || "—"}</strong><small>{getLevel(average)}</small></div>
+            <dl>
+              <div><dt>Best WPM</dt><dd>{best || "—"}</dd></div>
+              <div><dt>Accuracy</dt><dd>{sessions.length ? `${accuracy.toFixed(1)}%` : "—"}</dd></div>
+              <div><dt>Practice time</dt><dd>{formatDuration(practiceSeconds)}</dd></div>
+              <div><dt>Articles</dt><dd>{sessions.length || "—"}</dd></div>
+              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(sessions.map((session) => session.createdAt))} days</dd></div>
+            </dl>
           </section>
 
           <section className="goal-section">
@@ -203,18 +210,6 @@ export function ProgressDashboard() {
         </>
       ) : (
         <>
-          <section className="progress-summary progress-summary--words">
-            <div className="progress-primary"><span>Words completed</span><strong>{wordSummary.completedWords || "—"}</strong><small>{getWordLevel(wordSummary.accuracy)}</small></div>
-            <dl>
-              <div><dt>Key accuracy</dt><dd>{wordSummary.accuracy === null ? "—" : `${wordSummary.accuracy.toFixed(1)}%`}</dd></div>
-              <div><dt>Completion</dt><dd>{wordSummary.completionRate === null ? "—" : `${wordSummary.completionRate.toFixed(1)}%`}</dd></div>
-              <div><dt>Key errors</dt><dd>{wordSummary.errorCount || "—"}</dd></div>
-              <div><dt>Sessions</dt><dd>{wordSummary.sessions || "—"}</dd></div>
-              <div><dt>Practice time</dt><dd>{formatDuration(wordSummary.duration)}</dd></div>
-              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(wordSessions.map((session) => session.createdAt))} days</dd></div>
-            </dl>
-          </section>
-
           <section className="progress-chart-section">
             <div className="section-title-row">
               <div><h2>Word accuracy over time</h2><p>Correct key attempts in each completed session.</p></div>
@@ -273,6 +268,18 @@ export function ProgressDashboard() {
                 ))}
               </div>
             ) : <div className="chart-empty">Complete a word session to see its result here.</div>}
+          </section>
+
+          <section className="progress-summary progress-summary--words" aria-label="Word practice summary">
+            <div className="progress-primary"><span>Words completed</span><strong>{wordSummary.completedWords || "—"}</strong><small>{getWordLevel(wordSummary.accuracy)}</small></div>
+            <dl>
+              <div><dt>Key accuracy</dt><dd>{wordSummary.accuracy === null ? "—" : `${wordSummary.accuracy.toFixed(1)}%`}</dd></div>
+              <div><dt>Completion</dt><dd>{wordSummary.completionRate === null ? "—" : `${wordSummary.completionRate.toFixed(1)}%`}</dd></div>
+              <div><dt>Key errors</dt><dd>{wordSummary.errorCount || "—"}</dd></div>
+              <div><dt>Sessions</dt><dd>{wordSummary.sessions || "—"}</dd></div>
+              <div><dt>Practice time</dt><dd>{formatDuration(wordSummary.duration)}</dd></div>
+              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(wordSessions.map((session) => session.createdAt))} days</dd></div>
+            </dl>
           </section>
         </>
       )}

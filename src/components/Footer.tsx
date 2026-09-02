@@ -8,8 +8,8 @@ export function Footer() {
       <div className="site-footer__meta">
         <span>{SITE_NAME}</span>
         <div>
-          <Link href="/practice">Practice</Link>
-          <Link href="/library">Library</Link>
+          <Link href="/practice">Essay Practice</Link>
+          <Link href="/library">Essay Library</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
           <span>© 2026</span>

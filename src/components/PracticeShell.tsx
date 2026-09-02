@@ -105,7 +105,7 @@ export function PracticeShell() {
         <>
           <div className="practice-heading">
             <div>
-              <h1>Practice</h1>
+              <h1>Essay Practice</h1>
               <p>Start typing. The timer begins with your first character.</p>
             </div>
             <button className="quiet-action" type="button" onClick={nextArticle}><Shuffle aria-hidden="true" /> Random article</button>
