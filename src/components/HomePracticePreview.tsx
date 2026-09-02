@@ -140,11 +140,8 @@ export function HomePracticePreview() {
       onClick={openPractice}
     >
       <span className="home-scroll-cue__label">
-        <span className="home-scroll-cue__marker" aria-hidden="true" />
+        <ArrowDown className="home-scroll-cue__icon" aria-hidden="true" />
         <span>Scroll to Practice</span>
-      </span>
-      <span className="home-scroll-cue__action" aria-hidden="true">
-        <ArrowDown />
       </span>
     </button>
   );
