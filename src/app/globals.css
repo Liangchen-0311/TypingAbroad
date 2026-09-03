@@ -617,7 +617,20 @@ button:disabled,
   width: var(--text-md);
   height: var(--text-md);
   color: var(--color-accent);
+  animation: home-scroll-cue-arrow 1.6s var(--ease-in-out) 4;
   transition: transform var(--dur-micro) var(--ease-out);
+}
+
+@keyframes home-scroll-cue-arrow {
+  0%, 100% {
+    opacity: 0.64;
+    transform: translateY(calc(0rem - var(--space-2xs)));
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(var(--space-2xs));
+  }
 }
 
 .home-scroll-cue[data-leaving="true"]::after {
@@ -630,6 +643,7 @@ button:disabled,
 
 .home-scroll-cue[data-leaving="true"] .home-scroll-cue__icon,
 .home-scroll-cue:active .home-scroll-cue__icon {
+  animation: none;
   transform: translateY(var(--space-2xs));
 }
 
@@ -1552,6 +1566,10 @@ code {
   padding-block: var(--space-sm) var(--space-xl);
 }
 
+.words-page .page-heading {
+  padding-block-end: var(--space-lg);
+}
+
 .progress-wpm-note {
   display: block;
   margin-block-start: var(--space-xs);
@@ -1960,12 +1978,16 @@ code {
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4
  * page: Word practice · macrostructure: Narrative Workflow
  * theme: existing custom Workbench system · enrichment: none · motion: functional typing feedback
- * variation knobs: English-first prompt · automatic word crossfade · persistent word session
+ * variation knobs: compact first fold · English-first prompt · automatic word crossfade · persistent word session
  */
 .word-practice {
   display: grid;
   min-width: 0;
   gap: var(--space-xl);
+}
+
+.words-page .word-practice {
+  gap: var(--space-sm);
 }
 
 .word-practice__controls {
@@ -1977,10 +1999,19 @@ code {
   border-block: var(--rule-hair) solid var(--color-rule-strong);
 }
 
+.words-page .word-practice__controls {
+  gap: var(--space-sm);
+  padding-block: var(--space-sm);
+}
+
 .word-practice__control {
   display: grid;
   gap: var(--space-xs);
   min-width: 0;
+}
+
+.words-page .word-practice__control {
+  gap: var(--space-2xs);
 }
 
 .word-practice__control > span,
@@ -2040,6 +2071,10 @@ code {
   color: var(--color-ink);
 }
 
+.words-page .word-practice__control select {
+  min-height: 2.5rem;
+}
+
 .word-practice__control select:focus-visible {
   outline-color: var(--color-focus);
 }
@@ -2064,6 +2099,11 @@ code {
   min-width: 0;
   padding-block: var(--space-lg) var(--space-xl);
   cursor: text;
+}
+
+.words-page .word-drill {
+  gap: var(--space-sm);
+  padding-block: var(--space-sm) var(--space-lg);
 }
 
 .word-drill__topline {
@@ -2094,6 +2134,10 @@ code {
   display: grid;
   min-width: 0;
   gap: var(--space-lg);
+}
+
+.words-page .word-drill__content {
+  gap: var(--space-sm);
 }
 
 .word-drill__content.is-leaving {
@@ -2142,6 +2186,11 @@ code {
   padding-block-end: var(--space-lg);
 }
 
+.words-page .word-drill__prompt {
+  gap: var(--space-xs);
+  padding-block-end: var(--space-md);
+}
+
 .word-drill__prompt h2 {
   font-family: var(--font-body);
   font-size: clamp(2rem, 5vw, var(--text-2xl));
@@ -2157,6 +2206,11 @@ code {
   border-block-end: var(--rule-hair) solid var(--color-rule);
 }
 
+.words-page .word-drill__target {
+  gap: var(--space-xs);
+  padding-block: var(--space-md);
+}
+
 .word-drill__target .typing-text {
   min-width: 0;
   min-height: 4.75rem;
@@ -2165,6 +2219,11 @@ code {
   padding-block: var(--space-sm);
   font-size: clamp(1.7rem, 9vw, 4.4rem);
   line-height: 1.05;
+}
+
+.words-page .word-drill__target .typing-text {
+  min-height: 4rem;
+  padding-block: var(--space-xs);
 }
 
 .word-drill.typing-stage--small .typing-text {
@@ -2382,7 +2441,7 @@ code {
 
   .words-page .page-heading {
     gap: var(--space-xs);
-    padding-block: var(--space-md) var(--space-xl);
+    padding-block: var(--space-md) var(--space-lg);
   }
 
   .words-page .page-heading h1 {
@@ -2396,6 +2455,10 @@ code {
   .word-practice__controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-sm);
+  }
+
+  .words-page .word-practice__control select {
+    min-height: 2.75rem;
   }
 
   .word-practice__shuffle {
@@ -2845,6 +2908,7 @@ code {
 
   .home-scroll-cue:hover .home-scroll-cue__icon,
   .home-scroll-cue:focus-visible .home-scroll-cue__icon {
+    animation: none;
     transform: translateY(var(--space-2xs));
   }
 
@@ -3127,6 +3191,7 @@ code {
 
   .home-scroll-cue__icon,
   .home-scroll-cue[data-leaving="true"] .home-scroll-cue__icon {
+    animation: none;
     transform: none;
   }
 
