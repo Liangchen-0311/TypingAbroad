@@ -1,4 +1,4 @@
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 · genre: modern-minimal · tone: quiet academic instrument · palette: warm amber on near-black · macrostructures: Split Studio (home) + Marquee Hero (about) · variation: claim/proof split + device-local metric · theme: custom · enrichment: E5 hand-built SVG (about) · nav: N1b preserved · footer: Ft5 preserved · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · icons: pass (30) · mobile: pass (34, 49–57) */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 · genre: modern-minimal · tone: quiet academic instrument · palette: warm amber on near-black · macrostructures: Split Studio (home) + Marquee Hero (about) · variation: proof-only rail + device-local metric · theme: custom · enrichment: E5 hand-built SVG (about) · nav: N1b preserved · footer: Ft5 preserved · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · icons: pass (30) · mobile: pass (34, 49–57) */
 @import "../../tokens.css";
 @import "tailwindcss";
 
@@ -493,6 +493,11 @@ button:disabled,
   font-size: var(--text-md);
 }
 
+.home-hero__copy > p strong {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
 .home-hero__cta {
   min-height: calc(var(--space-2xl) - var(--space-xs));
   padding-inline: var(--space-lg);
@@ -512,6 +517,13 @@ button:disabled,
   align-content: end;
   padding-block-start: var(--space-lg);
   border-block-start: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.home-writing-proof.home-writing-proof--compact {
+  gap: var(--space-lg);
+  align-content: center;
+  padding-block-start: 0;
+  border-block-start: 0;
 }
 
 .home-writing-proof__intro {

@@ -9,34 +9,14 @@ export default function HomePage() {
       <section className="home-hero">
         <div className="home-hero__copy">
           <h1><span>Type faster.</span><span>Write better.</span></h1>
-          <p>Type through high-scoring IELTS and TOEFL model essays—not random words or generic quotes.</p>
+          <p>Type through <strong>high-scoring IELTS and TOEFL model essays</strong>—not random words or generic quotes.</p>
           <Link className="primary-button home-hero__cta" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
         </div>
 
-        <div className="home-writing-proof">
-          <div className="home-writing-proof__intro">
-            <h2>Practice the English high scores demand.</h2>
-            <p>Build exam-ready typing fluency with model essays, academic vocabulary, and mistake review.</p>
-          </div>
-
+        <aside className="home-writing-proof home-writing-proof--compact" aria-label="Your typing progress">
           <HomeProgressProof />
-
-          <dl aria-label="Writing practice collection">
-            <div>
-              <dt>IELTS</dt>
-              <dd><strong>High-scoring model essays</strong></dd>
-            </div>
-            <div>
-              <dt>TOEFL</dt>
-              <dd><strong>Discussion and email responses</strong></dd>
-            </div>
-            <div>
-              <dt>Mistakes</dt>
-              <dd><strong>Retype missed words in context</strong></dd>
-            </div>
-          </dl>
           <Link className="text-link" href="/library">Explore the essay library <ArrowRight aria-hidden="true" /></Link>
-        </div>
+        </aside>
       </section>
 
       <HomePracticePreview />
