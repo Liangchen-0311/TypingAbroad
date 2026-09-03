@@ -1627,6 +1627,7 @@ code {
 .section-title-row h2,
 .goal-section h2 {
   font-size: var(--text-xl);
+  font-weight: 700;
 }
 
 .section-title-row p,
@@ -2236,9 +2237,9 @@ code {
 
 .about-marquee {
   display: grid;
-  min-height: clamp(24rem, 68dvh, 42rem);
+  min-height: clamp(20rem, 58dvh, 36rem);
   align-content: end;
-  padding-block: var(--space-xl) var(--space-3xl);
+  padding-block: var(--space-xl) var(--space-2xl);
   border-block-end: var(--space-2xs) solid var(--color-ink);
 }
 
