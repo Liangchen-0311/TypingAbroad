@@ -22,6 +22,18 @@ export function getWordPracticeCompletionAction(
   return isLastWord ? "finish-session" : "next-word";
 }
 
+export function shouldMarkMistakeLearned(
+  source: WordPracticeSource,
+  stage: WordPracticeStage,
+  firstPassCorrect: boolean,
+  currentPassHadError: boolean,
+) {
+  return source === "mistakes"
+    && stage === "context"
+    && firstPassCorrect
+    && !currentPassHadError;
+}
+
 export function findSentenceContainingWord(text: string, word: string) {
   const cleanText = text.trim();
   const cleanWord = word.trim();

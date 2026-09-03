@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { BookOpenCheck, Check, Keyboard, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { WordPractice } from "./WordPractice";
 import { getVocabulary, saveVocabulary } from "@/lib/storage";
 import { getChineseWordMeaning } from "@/lib/wordMeanings";
 import type { SavedVocabulary } from "@/lib/types";
 
 export function VocabularyManager() {
   const [items, setItems] = useState<SavedVocabulary[]>([]);
+  const [practiceOpen, setPracticeOpen] = useState(false);
   useEffect(() => {
     const stored = getVocabulary();
     let enrichedAny = false;
@@ -34,6 +36,14 @@ export function VocabularyManager() {
       .map((item) => item.word.trim().toLowerCase()),
   ).size;
 
+  const openMistakePractice = (scrollIntoView = false) => {
+    setPracticeOpen(true);
+    if (!scrollIntoView) return;
+    window.requestAnimationFrame(() => {
+      document.getElementById("practice-mistakes")?.scrollIntoView({ block: "start" });
+    });
+  };
+
   if (!items.length) {
     return (
       <div className="vocabulary-empty">
@@ -51,13 +61,32 @@ export function VocabularyManager() {
   return (
     <div className="vocabulary-manager">
       {mistakeWordCount > 0 && (
-        <section className="mistake-drill-entry" aria-labelledby="mistake-drill-title">
-          <div className="mistake-drill-entry__copy">
-            <h2 id="mistake-drill-title">Practice your mistakes</h2>
-            <p>Type each missed word, then recall it once more from its original sentence.</p>
-            <span>{mistakeWordCount} saved mistake {mistakeWordCount === 1 ? "word" : "words"}</span>
+        <section id="practice-mistakes" className="mistake-practice-workspace" aria-labelledby="mistake-drill-title">
+          <div className="mistake-drill-entry">
+            <div className="mistake-drill-entry__copy">
+              <h2 id="mistake-drill-title">Practice your mistakes</h2>
+              <p>Type each missed word, then recall it once more from its original sentence.</p>
+              <span>{mistakeWordCount} saved mistake {mistakeWordCount === 1 ? "word" : "words"}</span>
+            </div>
+            <button
+              className="primary-button"
+              type="button"
+              aria-expanded={practiceOpen}
+              aria-controls="mistake-drill-workspace"
+              onClick={() => setPracticeOpen((open) => !open)}
+            >
+              <Keyboard aria-hidden="true" /> {practiceOpen ? "Close practice" : "Start practice"}
+            </button>
           </div>
-          <Link className="primary-button" href="/words?source=mistakes"><Keyboard aria-hidden="true" /> Start mistake drill</Link>
+          {practiceOpen && (
+            <div id="mistake-drill-workspace" className="mistake-drill-workspace">
+              <WordPractice
+                source="mistakes"
+                vocabularyItems={items}
+                onVocabularyChange={setItems}
+              />
+            </div>
+          )}
         </section>
       )}
 
@@ -84,7 +113,11 @@ export function VocabularyManager() {
                 <button className="quiet-action" type="button" onClick={() => update(items.map((entry) => entry.id === item.id ? { ...entry, learned: !entry.learned } : entry))}>
                   <Check aria-hidden="true" /> {item.learned ? "Mark learning" : "Mark learned"}
                 </button>
-                <Link className="quiet-action" href={item.sourceHref ?? `/practice?article=${item.sourceArticleId}`}><Keyboard aria-hidden="true" /> Practice</Link>
+                {item.savedFromMistake ? (
+                  <button className="quiet-action" type="button" onClick={() => openMistakePractice(true)}><Keyboard aria-hidden="true" /> Practice</button>
+                ) : (
+                  <Link className="quiet-action" href={item.sourceHref ?? `/practice?article=${item.sourceArticleId}`}><Keyboard aria-hidden="true" /> Practice</Link>
+                )}
                 <button className="icon-button" type="button" aria-label={`Remove ${item.word}`} onClick={() => update(items.filter((entry) => entry.id !== item.id))}><Trash2 aria-hidden="true" /></button>
               </div>
             </article>

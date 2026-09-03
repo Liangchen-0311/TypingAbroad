@@ -7,6 +7,7 @@ import type {
   WordPracticeCycleProgress,
   WordPracticeDraft,
   WordPracticeResult,
+  WordPracticeSource,
 } from "./types";
 
 function readJson<T>(key: string, fallback: T): T {
@@ -105,18 +106,27 @@ export function removeTypingDraft(articleId: string) {
   writeJson(STORAGE_KEYS.typingDrafts, drafts);
 }
 
-export function getWordPracticeDraft() {
-  const draft = readJson<WordPracticeDraft | null>(STORAGE_KEYS.wordPracticeDraft, null);
-  return draft?.version === 1 ? draft : null;
+function getWordPracticeDraftKey(source: WordPracticeSource) {
+  return `${STORAGE_KEYS.wordPracticeDraft}:${source}`;
+}
+
+export function getWordPracticeDraft(source: WordPracticeSource) {
+  const draft = readJson<WordPracticeDraft | null>(getWordPracticeDraftKey(source), null);
+  if (draft?.version === 1 && draft.source === source) return draft;
+
+  const legacyDraft = readJson<WordPracticeDraft | null>(STORAGE_KEYS.wordPracticeDraft, null);
+  return legacyDraft?.version === 1 && legacyDraft.source === source ? legacyDraft : null;
 }
 
 export function saveWordPracticeDraft(draft: WordPracticeDraft) {
-  writeJson(STORAGE_KEYS.wordPracticeDraft, draft);
+  writeJson(getWordPracticeDraftKey(draft.source), draft);
 }
 
-export function removeWordPracticeDraft() {
+export function removeWordPracticeDraft(source: WordPracticeSource) {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(STORAGE_KEYS.wordPracticeDraft);
+  window.localStorage.removeItem(getWordPracticeDraftKey(source));
+  const legacyDraft = readJson<WordPracticeDraft | null>(STORAGE_KEYS.wordPracticeDraft, null);
+  if (legacyDraft?.source === source) window.localStorage.removeItem(STORAGE_KEYS.wordPracticeDraft);
 }
 
 export function getWordPracticeCycleProgress() {

@@ -3,6 +3,7 @@ import {
   findSentenceContainingWord,
   getWordPracticeCompletionAction,
   maskWordInContext,
+  shouldMarkMistakeLearned,
   WORD_CONTEXT_BLANK,
 } from "./wordPracticeFlow";
 
@@ -17,6 +18,13 @@ describe("mistake practice flow", () => {
   it("keeps common-word practice as a single pass", () => {
     expect(getWordPracticeCompletionAction("common", "word", false)).toBe("next-word");
     expect(getWordPracticeCompletionAction("common", "word", true)).toBe("finish-session");
+  });
+
+  it("marks a mistake learned only when both passes were error-free", () => {
+    expect(shouldMarkMistakeLearned("mistakes", "context", true, false)).toBe(true);
+    expect(shouldMarkMistakeLearned("mistakes", "context", false, false)).toBe(false);
+    expect(shouldMarkMistakeLearned("mistakes", "context", true, true)).toBe(false);
+    expect(shouldMarkMistakeLearned("common", "word", true, false)).toBe(false);
   });
 
   it("finds the original sentence that contains the whole word", () => {

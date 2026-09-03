@@ -73,6 +73,8 @@ export interface WordPracticeDraft {
   sessionWordIds: string[];
   index: number;
   stage?: WordPracticeStage;
+  firstPassCorrect?: boolean;
+  currentPassHadError?: boolean;
   typed: string[];
   errorCount: number;
   masteredCount: number;

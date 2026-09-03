@@ -690,10 +690,10 @@ button:disabled,
 }
 
 .practice-heading h1 {
-  font-size: clamp(3.5rem, 6.5vw, 5.5rem);
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  line-height: 0.96;
+  font-size: clamp(2.5rem, 6vw, var(--text-4xl));
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
 }
 
 .practice-heading p {
@@ -967,6 +967,14 @@ button:disabled,
 }
 
 .typing-character.is-correct {
+  color: var(--color-ink);
+}
+
+.typing-character.is-placeholder {
+  color: var(--color-muted);
+}
+
+.typing-character.is-entered {
   color: var(--color-ink);
 }
 
@@ -1528,11 +1536,17 @@ code {
  * theme: existing custom · enrichment: none · motion: functional progress only
  * variation knobs: history-first order · compact summary · per-passage completion tracks
  */
-.progress-page.page-shell {
+.progress-page.page-shell,
+.words-page.page-shell,
+.library-page.page-shell,
+.vocabulary-page.page-shell {
   padding-block-start: var(--space-xl);
 }
 
-.progress-page .page-heading {
+.progress-page .page-heading,
+.words-page .page-heading,
+.library-page .page-heading,
+.vocabulary-page .page-heading {
   gap: var(--space-xs);
   padding-block: var(--space-sm) var(--space-xl);
 }
@@ -1823,6 +1837,12 @@ code {
   gap: var(--space-xl);
 }
 
+.mistake-practice-workspace {
+  display: grid;
+  min-width: 0;
+  scroll-margin-block-start: calc(4.5rem + var(--space-lg));
+}
+
 .mistake-drill-entry {
   display: grid;
   align-items: end;
@@ -1851,6 +1871,16 @@ code {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
+}
+
+.mistake-drill-workspace {
+  min-width: 0;
+  padding-block-end: var(--space-xl);
+  border-block-end: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.mistake-drill-workspace .word-practice__controls {
+  border-block-start: 0;
 }
 
 .vocabulary-list {
@@ -2196,6 +2226,22 @@ code {
   gap: var(--space-sm);
   padding-block-start: var(--space-lg);
   border-block-start: var(--rule-hair) solid var(--color-rule);
+}
+
+.word-drill__context-answer > span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
+}
+
+.word-drill__context-answer > span small {
+  color: var(--color-neutral);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .word-drill__context-answer .typing-text {

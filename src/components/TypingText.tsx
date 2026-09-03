@@ -7,6 +7,7 @@ interface TypingTextProps {
   typedCharacters: string[];
   smoothCaret: boolean;
   revealTarget?: boolean;
+  deferValidation?: boolean;
   ariaLabel?: string;
 }
 
@@ -15,6 +16,7 @@ export function TypingText({
   typedCharacters,
   smoothCaret,
   revealTarget = true,
+  deferValidation = false,
   ariaLabel,
 }: TypingTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +31,8 @@ export function TypingText({
       return [...result, { start, text }];
     }, []);
   }, [targetText]);
+  const targetCharacters = useMemo(() => Array.from(targetText), [targetText]);
+  const validationReady = !deferValidation || typedCharacters.length >= targetCharacters.length;
 
   const positionCaret = useCallback(() => {
     const container = containerRef.current;
@@ -109,15 +113,29 @@ export function TypingText({
           </>
         ) : (
           <span className="typing-word">
-            {typedCharacters.map((character, index) => (
-              <span
-                key={`${index}-${character}`}
-                className={`typing-character is-${character === targetText[index] ? "correct" : "incorrect"}`}
-              >
-                {character}
-              </span>
-            ))}
-            <span ref={currentRef} className="typing-character typing-end is-current" />
+            {targetCharacters.map((targetCharacter, index) => {
+              const character = typedCharacters[index];
+              const status = character === undefined
+                ? "placeholder"
+                : !validationReady
+                  ? "entered"
+                  : character === targetCharacter
+                    ? "correct"
+                    : "incorrect";
+              const isCurrent = index === typedCharacters.length;
+              return (
+                <span
+                  key={`${index}-slot`}
+                  ref={isCurrent ? currentRef : undefined}
+                  className={`typing-character is-${status}${isCurrent ? " is-current" : ""}`}
+                >
+                  {character ?? "_"}
+                </span>
+              );
+            })}
+            {typedCharacters.length === targetCharacters.length && (
+              <span ref={currentRef} className="typing-character typing-end is-current" />
+            )}
           </span>
         )}
       </span>
