@@ -8,6 +8,7 @@ interface TypingTextProps {
   smoothCaret: boolean;
   revealTarget?: boolean;
   deferValidation?: boolean;
+  inline?: boolean;
   ariaLabel?: string;
 }
 
@@ -17,9 +18,10 @@ export function TypingText({
   smoothCaret,
   revealTarget = true,
   deferValidation = false,
+  inline = false,
   ariaLabel,
 }: TypingTextProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLSpanElement>(null);
   const currentRef = useRef<HTMLSpanElement>(null);
   const caretRef = useRef<HTMLSpanElement>(null);
   const [caretReady, setCaretReady] = useState(false);
@@ -81,7 +83,11 @@ export function TypingText({
   }, [positionCaret]);
 
   return (
-    <div ref={containerRef} className="typing-text" aria-label={ariaLabel ?? `Text to type: ${targetText}`}>
+    <span
+      ref={containerRef}
+      className={`typing-text${inline ? " is-inline" : ""}`}
+      aria-label={ariaLabel ?? `Text to type: ${targetText}`}
+    >
       <span className="typing-words" aria-hidden="true">
         {revealTarget ? (
           <>
@@ -144,6 +150,6 @@ export function TypingText({
         className={`typing-caret${caretReady ? " is-ready" : ""}${smoothCaret ? " is-smooth" : ""}`}
         aria-hidden="true"
       />
-    </div>
+    </span>
   );
 }

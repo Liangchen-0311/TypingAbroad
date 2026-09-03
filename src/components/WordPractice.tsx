@@ -64,6 +64,7 @@ interface WordPracticeProps {
   source?: WordPracticeSource;
   vocabularyItems?: SavedVocabulary[];
   onVocabularyChange?: (items: SavedVocabulary[]) => void;
+  autoFocus?: boolean;
 }
 
 const COMMON_PRACTICE_WORDS: PracticeWord[] = writingWords.map((item) => ({
@@ -92,6 +93,7 @@ export function WordPractice({
   source = "common",
   vocabularyItems,
   onVocabularyChange,
+  autoFocus = false,
 }: WordPracticeProps = {}) {
   const [savedItems, setSavedItems] = useState<SavedVocabulary[]>([]);
   const [category, setCategory] = useState<CategoryFilter>("All");
@@ -222,6 +224,12 @@ export function WordPractice({
     : "";
 
   const focusInput = useCallback(() => inputRef.current?.focus({ preventScroll: true }), []);
+
+  useEffect(() => {
+    if (!autoFocus || !draftReady || !currentWord) return;
+    const frameId = window.requestAnimationFrame(focusInput);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [autoFocus, currentWord, draftReady, focusInput]);
 
   const getSessionElapsedMs = useCallback(() => (
     elapsedBeforeRunRef.current
@@ -637,30 +645,32 @@ export function WordPractice({
           {isContextRecall ? (
             <div className="word-drill__context-recall">
               <div className="word-drill__context-heading">
-                <span>Context recall</span>
+                <div className="word-drill__context-meta">
+                  <span>Context recall</span>
+                  <small>{typed.length} / {targetLength} letters</small>
+                </div>
                 {masteredCount < 3 && <h2>Type the missing word</h2>}
               </div>
-              <blockquote>
+              <blockquote className="word-drill__context-sentence">
                 {maskedContext.split(WORD_CONTEXT_BLANK).map((part, partIndex, parts) => (
                   <span key={`${partIndex}-${part}`}>
                     {part}
-                    {partIndex < parts.length - 1 && (
+                    {partIndex === 0 && partIndex < parts.length - 1 ? (
+                      <TypingText
+                        targetText={currentWord.word}
+                        typedCharacters={typed}
+                        smoothCaret={preferences.smoothCaret}
+                        revealTarget={false}
+                        deferValidation
+                        inline
+                        ariaLabel={`${targetLength}-letter answer inside the sentence`}
+                      />
+                    ) : partIndex < parts.length - 1 ? (
                       <span className="word-drill__context-blank" aria-label={`${targetLength}-letter missing word`}>{"_".repeat(targetLength)}</span>
-                    )}
+                    ) : null}
                   </span>
                 ))}
               </blockquote>
-              <div className="word-drill__context-answer">
-                <span>Your answer <small>{typed.length} / {targetLength} letters</small></span>
-                <TypingText
-                  targetText={currentWord.word}
-                  typedCharacters={typed}
-                  smoothCaret={preferences.smoothCaret}
-                  revealTarget={false}
-                  deferValidation
-                  ariaLabel="Your answer to the sentence gap"
-                />
-              </div>
             </div>
           ) : (
             <>
@@ -699,7 +709,7 @@ export function WordPractice({
                   : "Mistake saved. Use Backspace to correct the word."
                 : isContextRecall
                   ? typed.length < targetLength
-                    ? "Your answer is checked when every letter slot is filled."
+                    ? "Fill the blank to check your answer."
                     : "Checking your answer…"
                   : "Finish the word to continue automatically."}
           </p>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BookOpenCheck, Check, Keyboard, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { WordPractice } from "./WordPractice";
 import { getVocabulary, saveVocabulary } from "@/lib/storage";
 import { getChineseWordMeaning } from "@/lib/wordMeanings";
@@ -11,6 +11,7 @@ import type { SavedVocabulary } from "@/lib/types";
 export function VocabularyManager() {
   const [items, setItems] = useState<SavedVocabulary[]>([]);
   const [practiceOpen, setPracticeOpen] = useState(false);
+  const practiceWorkspaceRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const stored = getVocabulary();
     let enrichedAny = false;
@@ -36,12 +37,21 @@ export function VocabularyManager() {
       .map((item) => item.word.trim().toLowerCase()),
   ).size;
 
-  const openMistakePractice = (scrollIntoView = false) => {
-    setPracticeOpen(true);
-    if (!scrollIntoView) return;
-    window.requestAnimationFrame(() => {
-      document.getElementById("practice-mistakes")?.scrollIntoView({ block: "start" });
+  useEffect(() => {
+    if (!practiceOpen) return;
+    const frameId = window.requestAnimationFrame(() => {
+      const target = practiceWorkspaceRef.current?.querySelector<HTMLElement>(".word-drill")
+        ?? practiceWorkspaceRef.current;
+      target?.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      });
     });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [practiceOpen]);
+
+  const openMistakePractice = () => {
+    setPracticeOpen(true);
   };
 
   if (!items.length) {
@@ -73,17 +83,18 @@ export function VocabularyManager() {
               type="button"
               aria-expanded={practiceOpen}
               aria-controls="mistake-drill-workspace"
-              onClick={() => setPracticeOpen((open) => !open)}
+              onClick={() => practiceOpen ? setPracticeOpen(false) : openMistakePractice()}
             >
               <Keyboard aria-hidden="true" /> {practiceOpen ? "Close practice" : "Start practice"}
             </button>
           </div>
           {practiceOpen && (
-            <div id="mistake-drill-workspace" className="mistake-drill-workspace">
+            <div ref={practiceWorkspaceRef} id="mistake-drill-workspace" className="mistake-drill-workspace">
               <WordPractice
                 source="mistakes"
                 vocabularyItems={items}
                 onVocabularyChange={setItems}
+                autoFocus
               />
             </div>
           )}
@@ -114,7 +125,7 @@ export function VocabularyManager() {
                   <Check aria-hidden="true" /> {item.learned ? "Mark learning" : "Mark learned"}
                 </button>
                 {item.savedFromMistake ? (
-                  <button className="quiet-action" type="button" onClick={() => openMistakePractice(true)}><Keyboard aria-hidden="true" /> Practice</button>
+                  <button className="quiet-action" type="button" onClick={openMistakePractice}><Keyboard aria-hidden="true" /> Practice</button>
                 ) : (
                   <Link className="quiet-action" href={item.sourceHref ?? `/practice?article=${item.sourceArticleId}`}><Keyboard aria-hidden="true" /> Practice</Link>
                 )}
