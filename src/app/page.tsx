@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HomePracticePreview } from "@/components/HomePracticePreview";
+import { HomeProgressProof } from "@/components/HomeProgressProof";
 
 export default function HomePage() {
   return (
@@ -14,8 +15,12 @@ export default function HomePage() {
 
         <div className="home-writing-proof">
           <div className="home-writing-proof__intro">
-            <h2>High-scoring Writing Essays and Vocabulary</h2>
+            <h2>Practice the English high scores demand.</h2>
+            <p>Build exam-ready typing fluency with model essays, academic vocabulary, and mistake review.</p>
           </div>
+
+          <HomeProgressProof />
+
           <dl aria-label="Writing practice collection">
             <div>
               <dt>IELTS</dt>
@@ -23,11 +28,11 @@ export default function HomePage() {
             </div>
             <div>
               <dt>TOEFL</dt>
-              <dd><strong>High-scoring sample responses</strong></dd>
+              <dd><strong>Discussion and email responses</strong></dd>
             </div>
             <div>
-              <dt>Word Practice</dt>
-              <dd><strong>Essential English words</strong></dd>
+              <dt>Mistakes</dt>
+              <dd><strong>Retype missed words in context</strong></dd>
             </div>
           </dl>
           <Link className="text-link" href="/library">Explore the essay library <ArrowRight aria-hidden="true" /></Link>
