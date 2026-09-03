@@ -34,12 +34,14 @@ function createMistakeVocabulary(article: Article, word: string, position: numbe
   const learningItem = article.vocabulary.find((item) => normaliseWord(item.word) === normalised);
   const commonWord = writingWords.find((item) => item.word === normalised);
   const meaningZh = getChineseWordMeaning(normalised);
+  const mistakeContext = getSentenceContext(article.text, position);
   return {
     id: `${article.id}:${normalised}`,
     word: word.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g, ""),
     meaning: learningItem?.meaning ?? commonWord?.definition ?? meaningZh ?? "文章练习中输入错误的单词",
     meaningZh,
-    example: learningItem?.example ?? commonWord?.example ?? getSentenceContext(article.text, position),
+    example: learningItem?.example || commonWord?.example || mistakeContext,
+    mistakeContext,
     sourceArticleId: article.id,
     sourceTitle: article.title,
     sourceHref: `/practice?article=${article.id}`,

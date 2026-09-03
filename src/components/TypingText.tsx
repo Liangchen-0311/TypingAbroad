@@ -6,9 +6,17 @@ interface TypingTextProps {
   targetText: string;
   typedCharacters: string[];
   smoothCaret: boolean;
+  revealTarget?: boolean;
+  ariaLabel?: string;
 }
 
-export function TypingText({ targetText, typedCharacters, smoothCaret }: TypingTextProps) {
+export function TypingText({
+  targetText,
+  typedCharacters,
+  smoothCaret,
+  revealTarget = true,
+  ariaLabel,
+}: TypingTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const currentRef = useRef<HTMLSpanElement>(null);
   const caretRef = useRef<HTMLSpanElement>(null);
@@ -69,32 +77,48 @@ export function TypingText({ targetText, typedCharacters, smoothCaret }: TypingT
   }, [positionCaret]);
 
   return (
-    <div ref={containerRef} className="typing-text" aria-label={`Text to type: ${targetText}`}>
+    <div ref={containerRef} className="typing-text" aria-label={ariaLabel ?? `Text to type: ${targetText}`}>
       <span className="typing-words" aria-hidden="true">
-        {wordSegments.map((segment) => {
-          return (
-            <span className="typing-word" key={`${segment.start}-${segment.text}`}>
-              {Array.from(segment.text).map((character, localIndex) => {
-                const index = segment.start + localIndex;
-                const typed = typedCharacters[index];
-                const status = typed === undefined ? "pending" : typed === character ? "correct" : "incorrect";
-                const isCurrent = index === typedCharacters.length;
-                return (
-                  <span
-                    key={`${index}-${character}`}
-                    ref={isCurrent ? currentRef : undefined}
-                    className={`typing-character is-${status}${isCurrent ? " is-current" : ""}`}
-                    data-typed={typed === " " && typed !== character ? "·" : typed}
-                  >
-                    {character}
-                  </span>
-                );
-              })}
-            </span>
-          );
-        })}
-        {typedCharacters.length === targetText.length && (
-          <span ref={currentRef} className="typing-character typing-end is-current" />
+        {revealTarget ? (
+          <>
+            {wordSegments.map((segment) => {
+              return (
+                <span className="typing-word" key={`${segment.start}-${segment.text}`}>
+                  {Array.from(segment.text).map((character, localIndex) => {
+                    const index = segment.start + localIndex;
+                    const typed = typedCharacters[index];
+                    const status = typed === undefined ? "pending" : typed === character ? "correct" : "incorrect";
+                    const isCurrent = index === typedCharacters.length;
+                    return (
+                      <span
+                        key={`${index}-${character}`}
+                        ref={isCurrent ? currentRef : undefined}
+                        className={`typing-character is-${status}${isCurrent ? " is-current" : ""}`}
+                        data-typed={typed === " " && typed !== character ? "·" : typed}
+                      >
+                        {character}
+                      </span>
+                    );
+                  })}
+                </span>
+              );
+            })}
+            {typedCharacters.length === targetText.length && (
+              <span ref={currentRef} className="typing-character typing-end is-current" />
+            )}
+          </>
+        ) : (
+          <span className="typing-word">
+            {typedCharacters.map((character, index) => (
+              <span
+                key={`${index}-${character}`}
+                className={`typing-character is-${character === targetText[index] ? "correct" : "incorrect"}`}
+              >
+                {character}
+              </span>
+            ))}
+            <span ref={currentRef} className="typing-character typing-end is-current" />
+          </span>
         )}
       </span>
       <span

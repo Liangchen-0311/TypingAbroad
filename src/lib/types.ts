@@ -61,6 +61,7 @@ export interface TypingDraft {
 }
 
 export type WordPracticeSource = "common" | "mistakes";
+export type WordPracticeStage = "word" | "context";
 export type WordPracticeCycleProgress = Record<string, string[]>;
 
 export interface WordPracticeDraft {
@@ -71,6 +72,7 @@ export interface WordPracticeDraft {
   shuffleVersion: number;
   sessionWordIds: string[];
   index: number;
+  stage?: WordPracticeStage;
   typed: string[];
   errorCount: number;
   masteredCount: number;
@@ -132,6 +134,7 @@ export interface SavedVocabulary extends VocabularyItem {
   sourceTitle: string;
   sourceHref?: string;
   meaningZh?: string;
+  mistakeContext?: string;
   savedFromMistake?: boolean;
   mistakeCount?: number;
   learned: boolean;

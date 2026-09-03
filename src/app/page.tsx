@@ -14,7 +14,7 @@ export default function HomePage() {
 
         <div className="home-writing-proof">
           <div className="home-writing-proof__intro">
-            <h2>High-scoring writing essays and vocabulary, built into every session.</h2>
+            <h2>High-scoring Writing Essays and Vocabulary</h2>
           </div>
           <dl aria-label="Writing practice collection">
             <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, BookMarked, RefreshCw, Shuffle, SkipForward } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TypingText } from "./TypingText";
@@ -26,12 +26,20 @@ import {
 } from "@/lib/writingWords";
 import { calculateAccuracy } from "@/lib/typing";
 import { getChineseWordMeaning } from "@/lib/wordMeanings";
+import { articles } from "@/lib/articles";
+import {
+  findSentenceContainingWord,
+  getWordPracticeCompletionAction,
+  maskWordInContext,
+  WORD_CONTEXT_BLANK,
+} from "@/lib/wordPracticeFlow";
 import type {
   SavedVocabulary,
   WordPracticeCycleProgress,
   WordPracticeDraft,
   WordPracticeResult,
   WordPracticeSource,
+  WordPracticeStage,
 } from "@/lib/types";
 
 type CategoryFilter = "All" | WritingWordCategory;
@@ -46,6 +54,7 @@ interface PracticeWord {
   meaningZh: string;
   definition: string;
   example: string;
+  context: string;
   category: string;
   savedItem?: SavedVocabulary;
 }
@@ -56,6 +65,7 @@ const COMMON_PRACTICE_WORDS: PracticeWord[] = writingWords.map((item) => ({
   meaningZh: item.meaningZh,
   definition: item.definition,
   example: item.example,
+  context: item.example,
   category: item.category,
 }));
 
@@ -72,6 +82,7 @@ function createSeededRandom(seed: number) {
 }
 
 export function WordPractice() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialSource = searchParams.get("source") === "mistakes" ? "mistakes" as const : undefined;
   const [source, setSource] = useState<WordPracticeSource>(initialSource ?? "common");
@@ -80,6 +91,7 @@ export function WordPractice() {
   const [sessionLength, setSessionLength] = useState(10);
   const [shuffleVersion, setShuffleVersion] = useState(0);
   const [index, setIndex] = useState(0);
+  const [practiceStage, setPracticeStage] = useState<WordPracticeStage>("word");
   const [typed, setTyped] = useState<string[]>([]);
   const [errorCount, setErrorCount] = useState(0);
   const [masteredCount, setMasteredCount] = useState(0);
@@ -118,6 +130,7 @@ export function WordPractice() {
     setShuffleVersion(Math.max(0, draft.shuffleVersion));
     setRestoredSessionIds(draft.sessionWordIds);
     setIndex(Math.max(0, draft.index));
+    setPracticeStage(draft.source === "mistakes" && draft.stage === "context" ? "context" : "word");
     setTyped(draft.typed);
     typedRef.current = draft.typed;
     setErrorCount(Math.max(0, draft.errorCount));
@@ -141,12 +154,15 @@ export function WordPractice() {
     }
     return Array.from(unique.values()).map((item) => {
       const common = writingWords.find((entry) => entry.word === normaliseWord(item.word));
+      const sourceArticle = articles.find((article) => article.id === item.sourceArticleId);
+      const articleContext = sourceArticle ? findSentenceContainingWord(sourceArticle.text, item.word) : null;
       return {
         id: `saved:${item.id}`,
         word: normaliseWord(item.word),
         meaningZh: item.meaningZh ?? common?.meaningZh ?? getChineseWordMeaning(item.word) ?? "尚未添加中文释义",
         definition: item.meaning,
         example: item.example,
+        context: item.mistakeContext || articleContext || item.example,
         category: common?.category ?? "My mistakes",
         savedItem: item,
       };
@@ -183,6 +199,10 @@ export function WordPractice() {
   const typedWord = typed.join("");
   const wordComplete = Boolean(currentWord && typedWord === currentWord.word);
   const hasCurrentError = Boolean(currentWord && typed.some((character, characterIndex) => character !== currentWord.word[characterIndex]));
+  const isContextRecall = source === "mistakes" && practiceStage === "context";
+  const maskedContext = currentWord
+    ? maskWordInContext(currentWord.context, currentWord.word, currentWord.definition)
+    : "";
 
   const focusInput = useCallback(() => inputRef.current?.focus({ preventScroll: true }), []);
 
@@ -194,6 +214,7 @@ export function WordPractice() {
   const resetAttempt = useCallback((sessionIds: string[] | null) => {
     setRestoredSessionIds(sessionIds);
     setIndex(0);
+    setPracticeStage("word");
     setTyped([]);
     typedRef.current = [];
     setErrorCount(0);
@@ -215,7 +236,7 @@ export function WordPractice() {
 
   const saveCurrentMistake = useCallback(() => {
     if (!currentWord) return;
-    const attemptKey = `${index}:${currentWord.id}`;
+    const attemptKey = `${index}:${currentWord.id}:${practiceStage}`;
     if (savedMistakesRef.current.has(attemptKey)) return;
     savedMistakesRef.current.add(attemptKey);
 
@@ -224,6 +245,7 @@ export function WordPractice() {
     const item: SavedVocabulary = existing ? {
       ...existing,
       meaningZh: existing.meaningZh ?? currentWord.meaningZh,
+      mistakeContext: existing.mistakeContext || currentWord.context,
       savedFromMistake: true,
       mistakeCount: 1,
     } : {
@@ -232,6 +254,7 @@ export function WordPractice() {
       meaning: currentWord.definition,
       meaningZh: currentWord.meaningZh,
       example: currentWord.example,
+      mistakeContext: currentWord.context || `${currentWord.word} means ${currentWord.definition}.`,
       sourceArticleId: "word-practice",
       sourceTitle: "Word Practice",
       sourceHref: "/words?source=mistakes",
@@ -242,7 +265,7 @@ export function WordPractice() {
     };
     const next = saveVocabularyItem(item);
     if (source === "common") setSavedItems(next);
-  }, [currentWord, index, source]);
+  }, [currentWord, index, practiceStage, source]);
 
   const typeCharacters = useCallback((characters: string[]) => {
     if (!currentWord || finished || wordTransition === "leaving") return;
@@ -270,6 +293,7 @@ export function WordPractice() {
 
   const moveNext = useCallback((mastered: boolean) => {
     if (!currentWord) return;
+    setPracticeStage("word");
     if (mastered) setMasteredCount((count) => count + 1);
     else setSkippedCount((count) => count + 1);
 
@@ -330,15 +354,38 @@ export function WordPractice() {
     source,
   ]);
 
+  const showContextRecall = useCallback(() => {
+    setPracticeStage("context");
+    setTyped([]);
+    typedRef.current = [];
+    setWordTransition("entering");
+    window.requestAnimationFrame(focusInput);
+  }, [focusInput]);
+
   useEffect(() => {
     if (!wordComplete || finished) return;
+    const completionAction = getWordPracticeCompletionAction(
+      source,
+      practiceStage,
+      index >= session.length - 1,
+    );
     setWordTransition("leaving");
     const timeoutId = window.setTimeout(
-      () => moveNext(true),
+      () => completionAction === "show-context" ? showContextRecall() : moveNext(true),
       preferences.smoothCaret ? WORD_EXIT_MS : 0,
     );
     return () => window.clearTimeout(timeoutId);
-  }, [finished, moveNext, preferences.smoothCaret, wordComplete]);
+  }, [
+    finished,
+    index,
+    moveNext,
+    practiceStage,
+    preferences.smoothCaret,
+    session.length,
+    showContextRecall,
+    source,
+    wordComplete,
+  ]);
 
   useEffect(() => {
     if (wordTransition !== "entering") return;
@@ -359,6 +406,7 @@ export function WordPractice() {
       shuffleVersion,
       sessionWordIds: session.map((item) => item.id),
       index,
+      stage: practiceStage,
       typed,
       errorCount,
       masteredCount,
@@ -379,6 +427,7 @@ export function WordPractice() {
     index,
     inputCount,
     masteredCount,
+    practiceStage,
     session,
     sessionLength,
     shuffleVersion,
@@ -436,6 +485,11 @@ export function WordPractice() {
     resetSession();
   };
 
+  const showCommonWords = () => {
+    updateSource("common");
+    router.replace("/words", { scroll: false });
+  };
+
   const startNextSession = () => {
     setShuffleVersion((value) => value + 1);
     resetSession();
@@ -446,37 +500,45 @@ export function WordPractice() {
   };
 
   const controls = (
-    <section className="word-practice__controls" aria-label="Word practice controls">
-      <div className="word-practice__source">
-        <span>Source</span>
-        <div className="segmented" role="group" aria-label="Word source">
-          <button type="button" className={source === "common" ? "is-active" : ""} onClick={() => updateSource("common")}>Common <small>{writingWords.length}</small></button>
-          <button type="button" className={source === "mistakes" ? "is-active" : ""} onClick={() => updateSource("mistakes")}>Mistakes <small>{mistakeWords.length}</small></button>
-        </div>
-      </div>
-      <label className="word-practice__control">
-        <span>Category</span>
-        <select
-          value={source === "mistakes" ? "All" : category}
-          disabled={source === "mistakes"}
-          onChange={(event) => { setCategory(event.target.value as CategoryFilter); resetSession(); }}
-        >
-          <option value="All">All</option>
-          {WRITING_WORD_CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
-        </select>
-      </label>
-      <label className="word-practice__control">
-        <span>Session</span>
-        <select value={sessionLength} onChange={(event) => { setSessionLength(Number(event.target.value)); resetSession(); }}>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={40}>40</option>
-        </select>
-      </label>
-      <button className="quiet-action word-practice__shuffle" type="button" onClick={() => { setShuffleVersion((value) => value + 1); resetSession(); }}>
-        <Shuffle aria-hidden="true" /> Shuffle
-      </button>
-    </section>
+    <>
+      {source === "mistakes" && (
+        <section className="word-practice__mistake-context" aria-label="Mistake practice source">
+          <div>
+            <span>Mistake drill</span>
+            <strong>{mistakeWords.length} saved mistake {mistakeWords.length === 1 ? "word" : "words"}</strong>
+          </div>
+          <div className="word-practice__mistake-actions">
+            <Link className="quiet-action" href="/vocabulary"><BookMarked aria-hidden="true" /> Mistake Review</Link>
+            <button className="quiet-action" type="button" onClick={showCommonWords}>Common words</button>
+          </div>
+        </section>
+      )}
+      <section className={`word-practice__controls${source === "mistakes" ? " is-mistakes" : ""}`} aria-label="Word practice controls">
+        {source === "common" && (
+          <label className="word-practice__control">
+            <span>Category</span>
+            <select
+              value={category}
+              onChange={(event) => { setCategory(event.target.value as CategoryFilter); resetSession(); }}
+            >
+              <option value="All">All</option>
+              {WRITING_WORD_CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </label>
+        )}
+        <label className="word-practice__control">
+          <span>Session</span>
+          <select value={sessionLength} onChange={(event) => { setSessionLength(Number(event.target.value)); resetSession(); }}>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={40}>40</option>
+          </select>
+        </label>
+        <button className="quiet-action word-practice__shuffle" type="button" onClick={() => { setShuffleVersion((value) => value + 1); resetSession(); }}>
+          <Shuffle aria-hidden="true" /> Shuffle
+        </button>
+      </section>
+    </>
   );
 
   if (!session.length) {
@@ -517,11 +579,15 @@ export function WordPractice() {
   return (
     <div className="word-practice">
       {controls}
-      <section className={`word-drill typing-stage--${preferences.fontSize} typing-stage--${preferences.typingFont}`} onClick={focusInput} aria-label={`Type the word ${currentWord.word}`}>
+      <section
+        className={`word-drill typing-stage--${preferences.fontSize} typing-stage--${preferences.typingFont}`}
+        onClick={focusInput}
+        aria-label={isContextRecall ? "Complete the sentence by typing the missing word" : `Type the word ${currentWord.word}`}
+      >
         <textarea
           ref={inputRef}
           className="typing-input"
-          aria-label={`Type ${currentWord.word}`}
+          aria-label={isContextRecall ? "Type the missing word" : `Type ${currentWord.word}`}
           autoCapitalize="none"
           autoCorrect="off"
           spellCheck={false}
@@ -534,33 +600,78 @@ export function WordPractice() {
         />
         <div className="word-drill__topline">
           <span>{String(index + 1).padStart(2, "0")} / {String(session.length).padStart(2, "0")}</span>
-          <div><span>{currentWord.category}</span><span>{errorCount} key errors</span></div>
+          <div>
+            {source === "mistakes" && <span className="word-drill__pass">Pass {isContextRecall ? "2" : "1"} / 2</span>}
+            <span>{currentWord.category}</span>
+            <span>{errorCount} key errors</span>
+          </div>
         </div>
 
         <div
-          key={`${index}:${currentWord.id}`}
+          key={`${index}:${currentWord.id}:${practiceStage}`}
           className={`word-drill__content is-${wordTransition}${preferences.smoothCaret ? "" : " is-instant"}`}
         >
-          <div className="word-drill__target">
-            <span>English word</span>
-            <TypingText
-              key={`${index}:${currentWord.id}`}
-              targetText={currentWord.word}
-              typedCharacters={typed}
-              smoothCaret={preferences.smoothCaret}
-            />
-          </div>
+          {isContextRecall ? (
+            <div className="word-drill__context-recall">
+              <div className="word-drill__context-heading">
+                <span>Context recall</span>
+                <h2>Type the missing word</h2>
+              </div>
+              <blockquote>
+                {maskedContext.split(WORD_CONTEXT_BLANK).map((part, partIndex, parts) => (
+                  <span key={`${partIndex}-${part}`}>
+                    {part}
+                    {partIndex < parts.length - 1 && (
+                      <span className="word-drill__context-blank" aria-label="missing word">{WORD_CONTEXT_BLANK}</span>
+                    )}
+                  </span>
+                ))}
+              </blockquote>
+              <div className="word-drill__context-answer">
+                <span>Your answer</span>
+                <TypingText
+                  targetText={currentWord.word}
+                  typedCharacters={typed}
+                  smoothCaret={preferences.smoothCaret}
+                  revealTarget={false}
+                  ariaLabel="Your answer to the sentence gap"
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="word-drill__target">
+                <span>English word</span>
+                <TypingText
+                  key={`${index}:${currentWord.id}`}
+                  targetText={currentWord.word}
+                  typedCharacters={typed}
+                  smoothCaret={preferences.smoothCaret}
+                />
+              </div>
 
-          <div className="word-drill__prompt">
-            <span>Chinese meaning</span>
-            <h2 lang="zh-CN">{currentWord.meaningZh}</h2>
-          </div>
+              <div className="word-drill__prompt">
+                <span>Chinese meaning</span>
+                <h2 lang="zh-CN">{currentWord.meaningZh}</h2>
+              </div>
 
-          {currentWord.example && <blockquote>{currentWord.example}</blockquote>}
+              {currentWord.example && <blockquote>{currentWord.example}</blockquote>}
+            </>
+          )}
         </div>
         <div className="word-drill__footer">
           <p className={wordComplete ? "is-success" : hasCurrentError ? "is-error" : ""} aria-live="polite">
-            {wordComplete ? "Complete. Loading the next word…" : hasCurrentError ? "Mistake saved. Use Backspace to correct the word." : "Finish the word to continue automatically."}
+            {wordComplete
+              ? isContextRecall
+                ? "Both passes complete. Loading the next word…"
+                : source === "mistakes"
+                  ? "First pass complete. Loading context recall…"
+                  : "Complete. Loading the next word…"
+              : hasCurrentError
+                ? "Mistake saved. Use Backspace to correct the word."
+                : isContextRecall
+                  ? "Type the missing word to complete the second pass."
+                  : "Finish the word to continue automatically."}
           </p>
           <div>
             <button className="quiet-action" type="button" disabled={wordTransition === "leaving"} onClick={(event) => { event.stopPropagation(); moveNext(false); }}><SkipForward aria-hidden="true" /> Skip</button>
