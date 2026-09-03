@@ -11,10 +11,6 @@ export default function HomePage() {
           <p>Type through <strong>high-scoring IELTS and TOEFL model essays</strong>—not random words or generic quotes.</p>
           <Link className="primary-button home-hero__cta" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
         </div>
-
-        <aside className="home-writing-proof home-writing-proof--compact" aria-label="Essay library">
-          <Link className="text-link" href="/library">Explore the essay library <ArrowRight aria-hidden="true" /></Link>
-        </aside>
       </section>
 
       <HomePracticePreview />
