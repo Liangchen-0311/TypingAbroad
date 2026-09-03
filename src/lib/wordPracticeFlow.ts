@@ -1,8 +1,29 @@
-import type { WordPracticeSource, WordPracticeStage } from "./types";
+import type { WordPracticeDraft, WordPracticeSource, WordPracticeStage } from "./types";
 
 export const WORD_CONTEXT_BLANK = "________";
 
 export type WordPracticeCompletionAction = "show-context" | "next-word" | "finish-session";
+
+export function getRestoredWordPracticeAttempt(
+  source: WordPracticeSource,
+  draft: Pick<WordPracticeDraft, "stage" | "firstPassCorrect" | "currentPassHadError" | "typed">,
+) {
+  if (source === "mistakes") {
+    return {
+      stage: "word" as const,
+      firstPassCorrect: false,
+      currentPassHadError: false,
+      typed: [] as string[],
+    };
+  }
+
+  return {
+    stage: draft.stage ?? "word",
+    firstPassCorrect: Boolean(draft.firstPassCorrect),
+    currentPassHadError: Boolean(draft.currentPassHadError),
+    typed: draft.typed,
+  };
+}
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

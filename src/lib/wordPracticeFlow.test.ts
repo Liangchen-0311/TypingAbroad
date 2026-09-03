@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   findSentenceContainingWord,
+  getRestoredWordPracticeAttempt,
   getWordPracticeCompletionAction,
   maskWordInContext,
   shouldMarkMistakeLearned,
@@ -8,6 +9,34 @@ import {
 } from "./wordPracticeFlow";
 
 describe("mistake practice flow", () => {
+  it("restarts the current mistake from the first pass when practice is reopened", () => {
+    expect(getRestoredWordPracticeAttempt("mistakes", {
+      stage: "context",
+      firstPassCorrect: true,
+      currentPassHadError: true,
+      typed: ["a", "c", "r"],
+    })).toEqual({
+      stage: "word",
+      firstPassCorrect: false,
+      currentPassHadError: false,
+      typed: [],
+    });
+  });
+
+  it("continues an interrupted common-word attempt", () => {
+    expect(getRestoredWordPracticeAttempt("common", {
+      stage: "word",
+      firstPassCorrect: false,
+      currentPassHadError: true,
+      typed: ["e", "v"],
+    })).toEqual({
+      stage: "word",
+      firstPassCorrect: false,
+      currentPassHadError: true,
+      typed: ["e", "v"],
+    });
+  });
+
   it("adds a context pass before advancing a mistake word", () => {
     expect(getWordPracticeCompletionAction("mistakes", "word", false)).toBe("show-context");
     expect(getWordPracticeCompletionAction("mistakes", "word", true)).toBe("show-context");

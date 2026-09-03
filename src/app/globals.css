@@ -1984,7 +1984,7 @@ code {
 }
 
 .word-practice__control > span,
-.word-drill__target > span,
+.word-drill__target > span:not(.typing-text),
 .word-drill__prompt > span {
   color: var(--color-muted);
   font-family: var(--font-mono);

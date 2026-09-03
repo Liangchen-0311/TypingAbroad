@@ -29,6 +29,7 @@ import { getChineseWordMeaning } from "@/lib/wordMeanings";
 import { articles } from "@/lib/articles";
 import {
   findSentenceContainingWord,
+  getRestoredWordPracticeAttempt,
   getWordPracticeCompletionAction,
   maskWordInContext,
   shouldMarkMistakeLearned,
@@ -134,16 +135,17 @@ export function WordPractice({
     const restoredCategory = draft.category === "All" || WRITING_WORD_CATEGORIES.includes(draft.category as WritingWordCategory)
       ? draft.category as CategoryFilter
       : "All";
+    const restoredAttempt = getRestoredWordPracticeAttempt(source, draft);
     setCategory(source === "mistakes" ? "All" : restoredCategory);
     setSessionLength([10, 20, 40].includes(draft.sessionLength) ? draft.sessionLength : 10);
     setShuffleVersion(Math.max(0, draft.shuffleVersion));
     setRestoredSessionIds(draft.sessionWordIds);
     setIndex(Math.max(0, draft.index));
-    setPracticeStage(source === "mistakes" && draft.stage === "context" ? "context" : "word");
-    setFirstPassCorrect(Boolean(draft.firstPassCorrect));
-    setCurrentPassHadError(Boolean(draft.currentPassHadError));
-    setTyped(draft.typed);
-    typedRef.current = draft.typed;
+    setPracticeStage(restoredAttempt.stage);
+    setFirstPassCorrect(restoredAttempt.firstPassCorrect);
+    setCurrentPassHadError(restoredAttempt.currentPassHadError);
+    setTyped(restoredAttempt.typed);
+    typedRef.current = restoredAttempt.typed;
     setErrorCount(Math.max(0, draft.errorCount));
     setMasteredCount(Math.max(0, draft.masteredCount));
     setSkippedCount(Math.max(0, draft.skippedCount));
