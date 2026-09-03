@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HomePracticePreview } from "@/components/HomePracticePreview";
-import { HomeProgressProof } from "@/components/HomeProgressProof";
 
 export default function HomePage() {
   return (
@@ -13,8 +12,7 @@ export default function HomePage() {
           <Link className="primary-button home-hero__cta" href="/practice">Start typing <ArrowRight aria-hidden="true" /></Link>
         </div>
 
-        <aside className="home-writing-proof home-writing-proof--compact" aria-label="Your typing progress">
-          <HomeProgressProof />
+        <aside className="home-writing-proof home-writing-proof--compact" aria-label="Essay library">
           <Link className="text-link" href="/library">Explore the essay library <ArrowRight aria-hidden="true" /></Link>
         </aside>
       </section>
