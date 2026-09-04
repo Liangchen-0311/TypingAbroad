@@ -1,8 +1,8 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5
- * genre: modern-minimal · macrostructures: Split Studio (home) + Marquee Hero (about) · nav: N1b · footer: Ft5
+ * genre: modern-minimal · macrostructures: Manifesto (home) + Marquee Hero (about) · nav: N1b · footer: Ft5
  * theme: custom · vibe: "quiet academic instrument" · paper: oklch(15% 0.012 80) · accent: oklch(78% 0.155 80)
  * display: Geist · body: IBM Plex Sans · typing: Roboto Mono · axes: dark / geometric-sans / chromatic-amber ~80°
- * enrichment: E5 hand-built SVG (about) · contrast: pass (40–41) · slop: pass (42–45)
+ * enrichment: static typing caret (home) + E5 hand-built SVG (about) · contrast: pass (40–41) · slop: pass (42–45)
  * honest: pass (46) · chrome: pass (47) · tokens: pass (48) · mobile: pass (34, 49–57)
  * studied: no · context: inferred · v1.1.0
  */
@@ -44,6 +44,7 @@
   --text-3xl: 3.05rem;
   --text-4xl: 3.81rem;
   --text-display: clamp(2.8rem, 6vw, 5.25rem);
+  --text-home-display: clamp(2.7rem, 7.5vw, 6rem);
   --text-typing: clamp(1.65rem, 2.65vw, 2.2rem);
 
   --space-3xs: 0.125rem;
