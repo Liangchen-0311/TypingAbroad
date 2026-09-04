@@ -1,4 +1,4 @@
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: modern-minimal · tone: quiet academic instrument · palette: warm amber on near-black · macrostructures: Manifesto (home) + Marquee Hero (about) · variation: offset statement + ruled action band · theme: custom · enrichment: static typing caret (home) + E5 hand-built SVG (about) · nav: N1b preserved · footer: Ft5 preserved · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · icons: pass (30) · mobile: pass (34, 49–57) */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: modern-minimal · tone: quiet academic instrument · palette: warm amber on near-black · macrostructures: Manifesto (home) + Marquee Hero (about) · variation: offset statement + ruled action band · theme: custom · enrichment: typography-only (home) + E5 hand-built SVG (about) · nav: N1b preserved · footer: Ft5 preserved · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · icons: pass (30) · mobile: pass (34, 49–57) */
 @import "../../tokens.css";
 @import "tailwindcss";
 
@@ -495,16 +495,6 @@ button:disabled,
 
 .home-hero h1 span:last-child {
   margin-inline-start: clamp(var(--space-lg), 12vw, var(--space-4xl));
-}
-
-.home-hero h1 span:last-child::after {
-  display: inline-block;
-  width: 0.055em;
-  height: 0.72em;
-  margin-inline-start: 0.08em;
-  background: var(--color-accent);
-  content: "";
-  vertical-align: -0.015em;
 }
 
 .home-hero__support {
