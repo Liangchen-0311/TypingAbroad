@@ -481,6 +481,7 @@ button:disabled,
   display: grid;
   min-width: 0;
   max-width: none;
+  row-gap: var(--space-md);
   overflow-wrap: anywhere;
   font-size: var(--text-home-display);
   font-weight: 700;
