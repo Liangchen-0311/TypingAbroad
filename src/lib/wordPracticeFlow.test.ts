@@ -5,6 +5,7 @@ import {
   getWordPracticeCompletionAction,
   maskWordInContext,
   shouldMarkMistakeLearned,
+  shouldRevealContextAnswer,
   WORD_CONTEXT_BLANK,
 } from "./wordPracticeFlow";
 
@@ -54,6 +55,14 @@ describe("mistake practice flow", () => {
     expect(shouldMarkMistakeLearned("mistakes", "context", false, false)).toBe(false);
     expect(shouldMarkMistakeLearned("mistakes", "context", true, true)).toBe(false);
     expect(shouldMarkMistakeLearned("common", "word", true, false)).toBe(false);
+  });
+
+  it("reveals the answer only after a wrong context attempt reaches the target length", () => {
+    expect(shouldRevealContextAnswer("mistakes", "context", 6, 6, true)).toBe(true);
+    expect(shouldRevealContextAnswer("mistakes", "context", 5, 6, true)).toBe(false);
+    expect(shouldRevealContextAnswer("mistakes", "context", 6, 6, false)).toBe(false);
+    expect(shouldRevealContextAnswer("mistakes", "word", 6, 6, true)).toBe(false);
+    expect(shouldRevealContextAnswer("common", "context", 6, 6, true)).toBe(false);
   });
 
   it("finds the original sentence that contains the whole word", () => {

@@ -55,6 +55,20 @@ export function shouldMarkMistakeLearned(
     && !currentPassHadError;
 }
 
+export function shouldRevealContextAnswer(
+  source: WordPracticeSource,
+  stage: WordPracticeStage,
+  typedLength: number,
+  targetLength: number,
+  hasTypedMismatch: boolean,
+) {
+  return source === "mistakes"
+    && stage === "context"
+    && targetLength > 0
+    && typedLength >= targetLength
+    && hasTypedMismatch;
+}
+
 export function findSentenceContainingWord(text: string, word: string) {
   const cleanText = text.trim();
   const cleanWord = word.trim();

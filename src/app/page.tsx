@@ -13,8 +13,8 @@ export default function HomePage() {
           </h1>
 
           <div className="home-hero__support">
-            <p>Type through <strong>high-scoring IELTS and TOEFL model essays</strong>—not random words or generic quotes.</p>
-            <Link className="primary-button home-hero__cta" href="/practice">
+            <p>Type through <strong>high-scoring IELTS and TOEFL model essays</strong>.</p>
+            <Link className="primary-button home-hero__cta" href="/practice?from=home">
               Start typing <ArrowRight aria-hidden="true" />
             </Link>
           </div>

@@ -33,6 +33,7 @@ import {
   getWordPracticeCompletionAction,
   maskWordInContext,
   shouldMarkMistakeLearned,
+  shouldRevealContextAnswer,
   WORD_CONTEXT_BLANK,
 } from "@/lib/wordPracticeFlow";
 import type {
@@ -218,9 +219,8 @@ export function WordPractice({
   const isContextRecall = source === "mistakes" && practiceStage === "context";
   const targetLength = currentWord ? Array.from(currentWord.word).length : 0;
   const hasTypedMismatch = Boolean(currentWord && typed.some((character, characterIndex) => character !== Array.from(currentWord.word)[characterIndex]));
-  const hasCurrentError = isContextRecall
-    ? typed.length === targetLength && hasTypedMismatch
-    : hasTypedMismatch;
+  const revealContextAnswer = shouldRevealContextAnswer(source, practiceStage, typed.length, targetLength, hasTypedMismatch);
+  const hasCurrentError = isContextRecall ? revealContextAnswer : hasTypedMismatch;
   const maskedContext = currentWord
     ? maskWordInContext(currentWord.context, currentWord.word, currentWord.definition)
     : "";
@@ -673,6 +673,18 @@ export function WordPractice({
                   </span>
                 ))}
               </blockquote>
+              {revealContextAnswer && (
+                <div className="word-drill__context-feedback" aria-live="polite">
+                  <div>
+                    <span>Correct answer</span>
+                    <strong>{currentWord.word}</strong>
+                  </div>
+                  <div>
+                    <span>Chinese meaning</span>
+                    <strong lang="zh-CN">{currentWord.meaningZh}</strong>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <>

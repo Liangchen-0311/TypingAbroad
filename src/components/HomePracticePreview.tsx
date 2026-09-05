@@ -10,6 +10,8 @@ type ViewTransitionDocument = Document & {
   };
 };
 
+const HOME_PRACTICE_HREF = "/practice?from=home";
+
 export function HomePracticePreview() {
   const router = useRouter();
   const [isLeaving, setIsLeaving] = useState(false);
@@ -38,7 +40,7 @@ export function HomePracticePreview() {
       };
 
       observer.observe(document.body, { childList: true, subtree: true });
-      router.push("/practice");
+      router.push(HOME_PRACTICE_HREF);
     });
   }, [router]);
 
@@ -50,7 +52,7 @@ export function HomePracticePreview() {
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) {
-      router.push("/practice");
+      router.push(HOME_PRACTICE_HREF);
       return;
     }
 
@@ -62,18 +64,18 @@ export function HomePracticePreview() {
           const transition = startViewTransition(navigateToPractice);
           transition.finished.catch(() => undefined);
         } catch {
-          router.push("/practice");
+          router.push(HOME_PRACTICE_HREF);
         }
       }, 120);
       return;
     }
 
     document.querySelector<HTMLElement>(".home-page")?.classList.add("is-leaving");
-    timeoutRef.current = window.setTimeout(() => router.push("/practice"), 220);
+    timeoutRef.current = window.setTimeout(() => router.push(HOME_PRACTICE_HREF), 220);
   }, [navigateToPractice, router]);
 
   useEffect(() => {
-    router.prefetch("/practice");
+    router.prefetch(HOME_PRACTICE_HREF);
 
     let touchStartY: number | null = null;
 

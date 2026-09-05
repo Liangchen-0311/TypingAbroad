@@ -22,7 +22,7 @@ export function PracticeShell() {
   const [articleId, setArticleId] = useState(initial.id);
   const [result, setResult] = useState<TypingResult | null>(null);
   const [completedPreviousBest, setCompletedPreviousBest] = useState(0);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(searchParams.get("from") === "home");
   const [runKey, setRunKey] = useState(0);
 
   const filtered = useMemo(
