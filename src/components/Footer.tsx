@@ -10,8 +10,10 @@ export function Footer() {
         <div>
           <Link href="/practice">Essay Practice</Link>
           <Link href="/library">Essay Library</Link>
+          <Link href="/membership">Membership</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
+          <Link href="/refund">Refunds</Link>
           <span>© 2026</span>
         </div>
       </div>

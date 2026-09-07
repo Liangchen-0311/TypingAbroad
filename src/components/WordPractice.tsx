@@ -5,6 +5,7 @@ import { ArrowRight, BookMarked, RefreshCw, Shuffle, SkipForward } from "lucide-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TypingText } from "./TypingText";
 import { usePreferences } from "./ThemeProvider";
+import { useMembership } from "./MembershipProvider";
 import {
   getVocabulary,
   getWordPracticeCycleProgress,
@@ -27,6 +28,13 @@ import {
 import { calculateAccuracy } from "@/lib/typing";
 import { getChineseWordMeaning } from "@/lib/wordMeanings";
 import { articles } from "@/lib/articles";
+import {
+  FREE_MISTAKE_WORD_LIMIT,
+  MEMBERSHIP_ACCESS_MODE,
+  accessIsOpen,
+  canAccessWordCategory,
+  canAccessWordSessionLength,
+} from "@/lib/membership";
 import {
   findSentenceContainingWord,
   getRestoredWordPracticeAttempt,
@@ -98,7 +106,7 @@ export function WordPractice({
   autoFocus = false,
 }: WordPracticeProps = {}) {
   const [savedItems, setSavedItems] = useState<SavedVocabulary[]>([]);
-  const [category, setCategory] = useState<CategoryFilter>("All");
+  const [category, setCategory] = useState<CategoryFilter>(MEMBERSHIP_ACCESS_MODE === "live" ? "Argument" : "All");
   const [sessionLength, setSessionLength] = useState(10);
   const [shuffleVersion, setShuffleVersion] = useState(0);
   const [index, setIndex] = useState(0);
@@ -123,6 +131,8 @@ export function WordPractice({
   const elapsedBeforeRunRef = useRef(0);
   const sessionStartedAtRef = useRef<number | null>(null);
   const { preferences } = usePreferences();
+  const { membership, accessMode } = useMembership();
+  const fullWordAccess = accessIsOpen(membership, accessMode);
 
   useEffect(() => {
     setSavedItems(getVocabulary());
@@ -187,14 +197,23 @@ export function WordPractice({
     });
   }, [savedItems]);
 
-  const availableWords = source === "mistakes" ? mistakeWords : COMMON_PRACTICE_WORDS;
+  const availableWords = source === "mistakes"
+    ? fullWordAccess ? mistakeWords : mistakeWords.slice(0, FREE_MISTAKE_WORD_LIMIT)
+    : COMMON_PRACTICE_WORDS;
+
+  const effectiveCategory: CategoryFilter = source === "mistakes" || category === "All" && fullWordAccess
+    ? category
+    : category !== "All" && canAccessWordCategory(category, membership, accessMode)
+      ? category
+      : "Argument";
+  const effectiveSessionLength = canAccessWordSessionLength(sessionLength, membership, accessMode) ? sessionLength : 10;
 
   const filteredWords = useMemo(
-    () => category === "All" || source === "mistakes" ? availableWords : availableWords.filter((item) => item.category === category),
-    [availableWords, category, source],
+    () => effectiveCategory === "All" || source === "mistakes" ? availableWords : availableWords.filter((item) => item.category === effectiveCategory),
+    [availableWords, effectiveCategory, source],
   );
 
-  const poolKey = `${source}:${source === "mistakes" ? "All" : category}`;
+  const poolKey = `${source}:${source === "mistakes" ? "All" : effectiveCategory}`;
   const practicedWordIds = cycleProgress[poolKey] ?? EMPTY_WORD_IDS;
 
   const session = useMemo(
@@ -203,15 +222,15 @@ export function WordPractice({
         const restored = restoreWritingWordSession(filteredWords, restoredSessionIds);
         if (restored.length) return restored;
       }
-      const labelSeed = `${source}:${category}`.split("").reduce((total, character) => total + character.charCodeAt(0), 0);
+      const labelSeed = `${source}:${effectiveCategory}`.split("").reduce((total, character) => total + character.charCodeAt(0), 0);
       return buildWritingWordSession(
         filteredWords,
-        sessionLength,
+        effectiveSessionLength,
         createSeededRandom(labelSeed + shuffleVersion * 997 + 1),
         practicedWordIds,
       );
     },
-    [category, filteredWords, practicedWordIds, restoredSessionIds, sessionLength, shuffleVersion, source],
+    [effectiveCategory, effectiveSessionLength, filteredWords, practicedWordIds, restoredSessionIds, shuffleVersion, source],
   );
   const currentWord = session[index];
   const typedWord = typed.join("");
@@ -341,8 +360,8 @@ export function WordPractice({
         version: 1,
         id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}`,
         source,
-        category: source === "mistakes" ? "All" : category,
-        requestedLength: sessionLength,
+        category: source === "mistakes" ? "All" : effectiveCategory,
+        requestedLength: effectiveSessionLength,
         totalWords: session.length,
         completedWords,
         skippedWords,
@@ -372,7 +391,8 @@ export function WordPractice({
     typedRef.current = [];
     window.requestAnimationFrame(focusInput);
   }, [
-    category,
+    effectiveCategory,
+    effectiveSessionLength,
     currentWord,
     errorCount,
     filteredWords,
@@ -382,7 +402,6 @@ export function WordPractice({
     masteredCount,
     poolKey,
     session,
-    sessionLength,
     skippedCount,
     source,
   ]);
@@ -455,8 +474,8 @@ export function WordPractice({
     const draft: WordPracticeDraft = {
       version: 1,
       source,
-      category,
-      sessionLength,
+      category: effectiveCategory,
+      sessionLength: effectiveSessionLength,
       shuffleVersion,
       sessionWordIds: session.map((item) => item.id),
       index,
@@ -476,7 +495,8 @@ export function WordPractice({
     const timeoutId = window.setTimeout(() => saveWordPracticeDraft(draft), 180);
     return () => window.clearTimeout(timeoutId);
   }, [
-    category,
+    effectiveCategory,
+    effectiveSessionLength,
     draftReady,
     errorCount,
     firstPassCorrect,
@@ -487,7 +507,6 @@ export function WordPractice({
     masteredCount,
     practiceStage,
     session,
-    sessionLength,
     shuffleVersion,
     skippedCount,
     source,
@@ -552,25 +571,34 @@ export function WordPractice({
         <label className="word-practice__control">
           <span>Category</span>
           <select
-            value={category}
+            value={effectiveCategory}
             onChange={(event) => { setCategory(event.target.value as CategoryFilter); resetSession(); }}
           >
-            <option value="All">All</option>
-            {WRITING_WORD_CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
+            <option value="All" disabled={!fullWordAccess}>All{!fullWordAccess ? " · Member" : ""}</option>
+            {WRITING_WORD_CATEGORIES.map((item) => (
+              <option key={item} value={item} disabled={!canAccessWordCategory(item, membership, accessMode)}>
+                {item}{canAccessWordCategory(item, membership, accessMode) ? "" : " · Member"}
+              </option>
+            ))}
           </select>
         </label>
       )}
       <label className="word-practice__control">
         <span>Session</span>
-        <select value={sessionLength} onChange={(event) => { setSessionLength(Number(event.target.value)); resetSession(); }}>
+        <select value={effectiveSessionLength} onChange={(event) => { setSessionLength(Number(event.target.value)); resetSession(); }}>
           <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={40}>40</option>
+          <option value={20} disabled={!canAccessWordSessionLength(20, membership, accessMode)}>20{fullWordAccess ? "" : " · Member"}</option>
+          <option value={40} disabled={!canAccessWordSessionLength(40, membership, accessMode)}>40{fullWordAccess ? "" : " · Member"}</option>
         </select>
       </label>
       <button className="quiet-action word-practice__shuffle" type="button" onClick={() => { setShuffleVersion((value) => value + 1); resetSession(); }}>
         <Shuffle aria-hidden="true" /> Shuffle
       </button>
+      {!fullWordAccess && (
+        <Link className="membership-limit-note" href="/membership?source=word-practice">
+          Free practice limit · View membership <ArrowRight aria-hidden="true" />
+        </Link>
+      )}
     </section>
   );
 

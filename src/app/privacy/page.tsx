@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE_NAME } from "@/lib/constants";
+import { COMPANY_NAME, SITE_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Privacy",
@@ -12,13 +12,13 @@ export default function PrivacyPage() {
     <article className="legal-page page-shell">
       <header className="page-heading">
         <h1>Privacy</h1>
-        <p>Last updated 25 August 2026</p>
+        <p>Last updated 7 September 2026</p>
       </header>
       <div className="legal-prose">
         <section>
           <h2>The short version</h2>
           <p>
-            {SITE_NAME} currently works without an account. Your typing sessions, unfinished drafts,
+            {SITE_NAME} currently works without a required account. Your typing sessions, unfinished drafts,
             preferences, goals, and saved vocabulary stay in your browser rather than being uploaded to
             a {SITE_NAME} account database.
           </p>
@@ -43,22 +43,33 @@ export default function PrivacyPage() {
         <section>
           <h2>Third-party services</h2>
           <p>
-            The public website is hosted by Vercel. Its processing of infrastructure and analytics data
-            is governed by Vercel&apos;s own privacy and security terms.
+            The public website is delivered through Tencent Cloud services. We also use privacy-conscious
+            performance and traffic measurement tools. Infrastructure providers may process standard request
+            data under their own privacy and security terms.
+          </p>
+        </section>
+        <section>
+          <h2>Membership and payment information</h2>
+          <p>
+            When online membership purchasing opens, we will use the mobile number supplied at checkout to
+            bind and recover membership access. Payment is processed by the selected payment provider. We do
+            not receive or store your Alipay password, payment password, or complete bank-card details.
+            Order identifiers, plan, amount, payment status and necessary contact information may be retained
+            to deliver the service, handle refunds and meet legal or accounting requirements.
           </p>
         </section>
         <section>
           <h2>Accounts and future changes</h2>
           <p>
-            Account registration and cross-device sync are not active. If we add them, we will update this
-            notice before collecting account details and explain how existing local progress can be moved
-            into an account.
+            Account-based cross-device sync is not active yet. We will update this notice before syncing
+            typing history to an account and explain how existing local progress can be moved securely.
           </p>
         </section>
         <section>
           <h2>Contact</h2>
           <p>
             Privacy questions can be sent to <a href="mailto:privacy@typeabroad.com">privacy@typeabroad.com</a>.
+            The service provider is {COMPANY_NAME}.
           </p>
         </section>
       </div>

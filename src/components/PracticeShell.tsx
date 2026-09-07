@@ -6,7 +6,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArticleSelector } from "./ArticleSelector";
 import { ResultsView } from "./ResultsView";
 import { TypingEngine } from "./TypingEngine";
+import { MemberGate } from "./MemberGate";
+import { useMembership } from "./MembershipProvider";
 import { articles, getArticle, getNextArticle } from "@/lib/articles";
+import { canAccessArticle, isFreeArticle } from "@/lib/membership";
 import { getActivePracticeArticle, getSessions, saveActivePracticeArticle, saveSession } from "@/lib/storage";
 import type { ArticleLength, Difficulty, Exam, TypingResult } from "@/lib/types";
 
@@ -24,12 +27,14 @@ export function PracticeShell() {
   const [completedPreviousBest, setCompletedPreviousBest] = useState(0);
   const [filtersOpen, setFiltersOpen] = useState(searchParams.get("from") === "home");
   const [runKey, setRunKey] = useState(0);
+  const { membership, accessMode } = useMembership();
 
   const filtered = useMemo(
     () => articles.filter((article) => article.exam === exam && article.taskType === taskType && article.difficulty === difficulty && article.length === length),
     [difficulty, exam, length, taskType],
   );
   const currentArticle = getArticle(articleId);
+  const currentArticleAccessible = canAccessArticle(currentArticle.id, membership, accessMode);
   const selectedMatchingArticle = filtered.find((article) => article.id === articleId) ?? filtered[0];
   const choose = useCallback((nextId: string) => {
     saveActivePracticeArticle(nextId);
@@ -79,7 +84,9 @@ export function PracticeShell() {
 
   const nextArticle = useCallback(() => {
     if (!currentArticle) return;
-    const pool = filtered.length > 1 ? filtered : articles.filter((article) => article.exam === exam);
+    const preferredPool = filtered.length > 1 ? filtered : articles.filter((article) => article.exam === exam);
+    const accessiblePool = preferredPool.filter((article) => canAccessArticle(article.id, membership, accessMode));
+    const pool = accessiblePool.length ? accessiblePool : preferredPool;
     const next = getNextArticle(currentArticle.id, pool);
     setExam(next.exam);
     setTaskType(next.taskType);
@@ -87,7 +94,7 @@ export function PracticeShell() {
     setLength(next.length);
     choose(next.id);
     setFiltersOpen(false);
-  }, [choose, currentArticle, exam, filtered]);
+  }, [accessMode, choose, currentArticle, exam, filtered, membership]);
 
   const handleComplete = useCallback((completed: TypingResult) => {
     const previousBest = getSessions()
@@ -180,7 +187,11 @@ export function PracticeShell() {
                           setFiltersOpen(false);
                         }}
                       >
-                        {filtered.map((article) => <option key={article.id} value={article.id}>{article.title}</option>)}
+                        {filtered.map((article) => (
+                          <option key={article.id} value={article.id}>
+                            {isFreeArticle(article.id) ? article.title : `${article.title} · Member`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                   ) : (
@@ -191,7 +202,13 @@ export function PracticeShell() {
             )}
           </section>
 
-          <TypingEngine key={`${currentArticle.id}-${runKey}`} article={currentArticle} onComplete={handleComplete} onNext={nextArticle} />
+          {currentArticleAccessible ? (
+            <TypingEngine key={`${currentArticle.id}-${runKey}`} article={currentArticle} onComplete={handleComplete} onNext={nextArticle} />
+          ) : (
+            <MemberGate title="Unlock this model essay" source="essay-practice">
+              This passage is part of the complete member library. You can choose one of the free samples above or compare membership access.
+            </MemberGate>
+          )}
         </>
       )}
 

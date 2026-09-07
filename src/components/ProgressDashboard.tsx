@@ -6,6 +6,8 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } fro
 import { articles } from "@/lib/articles";
 import { calculatePracticeStreak, summarizeWordCategories, summarizeWordPractice } from "@/lib/progress";
 import { getGoal, getSessions, getTypingDrafts, getWordPracticeResults, saveGoal } from "@/lib/storage";
+import { FREE_PROGRESS_RESULT_LIMIT, accessIsOpen } from "@/lib/membership";
+import { useMembership } from "./MembershipProvider";
 import type { TypingDraft, TypingResult, WordPracticeResult } from "@/lib/types";
 
 type ProgressView = "articles" | "words";
@@ -71,6 +73,8 @@ export function ProgressDashboard() {
   const [range, setRange] = useState<Range>(30);
   const [goal, setGoalState] = useState(60);
   const [renderedAt] = useState(() => Date.now());
+  const { membership, accessMode } = useMembership();
+  const fullProgressAccess = accessIsOpen(membership, accessMode);
 
   useEffect(() => {
     const articleResults = getSessions();
@@ -86,16 +90,24 @@ export function ProgressDashboard() {
   }, []);
 
   const articleById = useMemo(() => new Map(articles.map((article) => [article.id, article])), []);
-  const visibleArticles = useMemo(() => filterByRange(sessions, range, renderedAt), [range, renderedAt, sessions]);
-  const visibleWords = useMemo(() => filterByRange(wordSessions, range, renderedAt), [range, renderedAt, wordSessions]);
-  const average = sessions.length ? Math.round(sessions.reduce((sum, item) => sum + item.wpm, 0) / sessions.length) : 0;
-  const best = sessions.reduce((value, item) => Math.max(value, item.wpm), 0);
-  const accuracy = sessions.length ? sessions.reduce((sum, item) => sum + item.accuracy, 0) / sessions.length : 0;
-  const practiceSeconds = sessions.reduce((sum, item) => sum + item.duration, 0);
+  const accessibleSessions = useMemo(
+    () => fullProgressAccess ? sessions : sessions.slice(0, FREE_PROGRESS_RESULT_LIMIT),
+    [fullProgressAccess, sessions],
+  );
+  const accessibleWordSessions = useMemo(
+    () => fullProgressAccess ? wordSessions : wordSessions.slice(0, FREE_PROGRESS_RESULT_LIMIT),
+    [fullProgressAccess, wordSessions],
+  );
+  const visibleArticles = useMemo(() => filterByRange(accessibleSessions, range, renderedAt), [accessibleSessions, range, renderedAt]);
+  const visibleWords = useMemo(() => filterByRange(accessibleWordSessions, range, renderedAt), [accessibleWordSessions, range, renderedAt]);
+  const average = accessibleSessions.length ? Math.round(accessibleSessions.reduce((sum, item) => sum + item.wpm, 0) / accessibleSessions.length) : 0;
+  const best = accessibleSessions.reduce((value, item) => Math.max(value, item.wpm), 0);
+  const accuracy = accessibleSessions.length ? accessibleSessions.reduce((sum, item) => sum + item.accuracy, 0) / accessibleSessions.length : 0;
+  const practiceSeconds = accessibleSessions.reduce((sum, item) => sum + item.duration, 0);
   const articleChartData = visibleArticles.map((session, index) => ({ index: index + 1, wpm: session.wpm }));
   const goalProgress = Math.min(100, goal ? (average / goal) * 100 : 0);
-  const wordSummary = useMemo(() => summarizeWordPractice(wordSessions), [wordSessions]);
-  const wordCategories = useMemo(() => summarizeWordCategories(wordSessions), [wordSessions]);
+  const wordSummary = useMemo(() => summarizeWordPractice(accessibleWordSessions), [accessibleWordSessions]);
+  const wordCategories = useMemo(() => summarizeWordCategories(accessibleWordSessions), [accessibleWordSessions]);
   const wordChartData = visibleWords.map((session, index) => ({
     index: index + 1,
     accuracy: session.inputCount ? Number(session.accuracy.toFixed(1)) : null,
@@ -105,10 +117,10 @@ export function ProgressDashboard() {
     <div className="progress-dashboard">
       <div className="segmented progress-view-switch" role="group" aria-label="Progress type">
         <button type="button" className={view === "articles" ? "is-active" : ""} onClick={() => setView("articles")}>
-          Essay Practice <small>{sessions.length}</small>
+          Essay Practice <small>{accessibleSessions.length}</small>
         </button>
         <button type="button" className={view === "words" ? "is-active" : ""} onClick={() => setView("words")}>
-          Word Practice <small>{wordSessions.length}</small>
+          Word Practice <small>{accessibleWordSessions.length}</small>
         </button>
       </div>
 
@@ -162,9 +174,9 @@ export function ProgressDashboard() {
 
           <section className="progress-detail-section">
             <div className="section-title-row"><div><h2>Recent article results</h2><p>Speed, accuracy and errors from your latest completed passages.</p></div></div>
-            {sessions.length ? (
+            {accessibleSessions.length ? (
               <div className="progress-session-list">
-                {sessions.slice(0, 8).map((session) => {
+                {accessibleSessions.slice(0, 8).map((session) => {
                   const totalWords = articleById.get(session.articleId)?.wordCount;
                   return (
                     <article key={session.id} className="progress-session-row">
@@ -190,10 +202,10 @@ export function ProgressDashboard() {
             <div className="progress-primary"><span>Average WPM</span><strong>{average || "—"}</strong><small>{getLevel(average)}</small></div>
             <dl>
               <div><dt>Best WPM</dt><dd>{best || "—"}</dd></div>
-              <div><dt>Accuracy</dt><dd>{sessions.length ? `${accuracy.toFixed(1)}%` : "—"}</dd></div>
+              <div><dt>Accuracy</dt><dd>{accessibleSessions.length ? `${accuracy.toFixed(1)}%` : "—"}</dd></div>
               <div><dt>Practice time</dt><dd>{formatDuration(practiceSeconds)}</dd></div>
-              <div><dt>Articles</dt><dd>{sessions.length || "—"}</dd></div>
-              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(sessions.map((session) => session.createdAt))} days</dd></div>
+              <div><dt>Articles</dt><dd>{accessibleSessions.length || "—"}</dd></div>
+              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(accessibleSessions.map((session) => session.createdAt))} days</dd></div>
             </dl>
           </section>
 
@@ -250,9 +262,9 @@ export function ProgressDashboard() {
 
           <section className="progress-detail-section">
             <div className="section-title-row"><div><h2>Recent word sessions</h2><p>Your latest completion, accuracy and mistake results.</p></div></div>
-            {wordSessions.length ? (
+            {accessibleWordSessions.length ? (
               <div className="progress-session-list">
-                {wordSessions.slice(0, 10).map((session) => (
+                {accessibleWordSessions.slice(0, 10).map((session) => (
                   <article key={session.id} className="progress-session-row">
                     <div>
                       <span>{formatSessionDate(session.createdAt)} · {session.source === "mistakes" ? "Mistake review" : session.category}</span>
@@ -278,10 +290,16 @@ export function ProgressDashboard() {
               <div><dt>Key errors</dt><dd>{wordSummary.errorCount || "—"}</dd></div>
               <div><dt>Sessions</dt><dd>{wordSummary.sessions || "—"}</dd></div>
               <div><dt>Practice time</dt><dd>{formatDuration(wordSummary.duration)}</dd></div>
-              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(wordSessions.map((session) => session.createdAt))} days</dd></div>
+              <div><dt>Daily streak</dt><dd>{calculatePracticeStreak(accessibleWordSessions.map((session) => session.createdAt))} days</dd></div>
             </dl>
           </section>
         </>
+      )}
+      {!fullProgressAccess && (sessions.length > FREE_PROGRESS_RESULT_LIMIT || wordSessions.length > FREE_PROGRESS_RESULT_LIMIT) && (
+        <aside className="progress-membership-note">
+          <div><strong>Older results are saved.</strong><p>Free access shows the latest {FREE_PROGRESS_RESULT_LIMIT}. Membership restores the complete history view.</p></div>
+          <Link className="text-link" href="/membership?source=progress">View membership</Link>
+        </aside>
       )}
     </div>
   );

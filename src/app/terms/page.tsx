@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE_NAME } from "@/lib/constants";
+import { COMPANY_NAME, SITE_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -12,7 +12,7 @@ export default function TermsPage() {
     <article className="legal-page page-shell">
       <header className="page-heading">
         <h1>Terms</h1>
-        <p>Last updated 25 August 2026</p>
+        <p>Last updated 7 September 2026</p>
       </header>
       <div className="legal-prose">
         <section>
@@ -48,6 +48,31 @@ export default function TermsPage() {
           </p>
         </section>
         <section>
+          <h2>Free and member access</h2>
+          <p>
+            Free access may include selected essays, word categories, mistake review and recent progress.
+            Paid membership unlocks the features shown on the Membership page for the stated service period.
+            We may improve or reorganize individual learning materials while preserving the overall nature of
+            the purchased service.
+          </p>
+        </section>
+        <section>
+          <h2>Prices and payment</h2>
+          <p>
+            The checkout page shows the current price, original reference price where applicable, membership
+            period and total before payment. Paid plans are one-time purchases and do not renew automatically.
+            Membership is activated only after our server receives and verifies the payment result. A browser
+            redirect or payment screenshot alone does not establish payment.
+          </p>
+        </section>
+        <section>
+          <h2>Refunds</h2>
+          <p>
+            Digital membership refund eligibility is described in our <a href="/refund">Refund Policy</a>.
+            Nothing in these terms limits rights that cannot be excluded under applicable law.
+          </p>
+        </section>
+        <section>
           <h2>Changes</h2>
           <p>
             We may update the service or these terms as the product develops. The date above will change
@@ -58,6 +83,7 @@ export default function TermsPage() {
           <h2>Contact</h2>
           <p>
             Questions about these terms can be sent to <a href="mailto:hello@typeabroad.com">hello@typeabroad.com</a>.
+            The service provider is {COMPANY_NAME}.
           </p>
         </section>
       </div>

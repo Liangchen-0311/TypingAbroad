@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, UserRound, X } from "lucide-react";
+import { Crown, Menu, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { SITE_NAME } from "@/lib/constants";
 import { SettingsDialog } from "./SettingsDialog";
 import { ThemeToggle } from "./ThemeToggle";
+import { useMembership } from "./MembershipProvider";
+import { hasMemberAccess } from "@/lib/membership";
 
 const links = [
   ["Essay Practice", "/practice"],
@@ -20,6 +22,8 @@ const links = [
 export function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { membership } = useMembership();
+  const isMember = hasMemberAccess(membership);
 
   return (
     <header className="site-nav">
@@ -36,6 +40,10 @@ export function Navbar() {
           ))}
         </nav>
         <div className="site-nav__actions">
+          <Link href="/membership" className={`membership-nav-button${pathname === "/membership" ? " is-active" : ""}`}>
+            <Crown aria-hidden="true" />
+            <span>{isMember ? "Member" : "Upgrade"}</span>
+          </Link>
           <ThemeToggle />
           <SettingsDialog />
           <button className="profile-button" type="button" disabled title="Account sync arrives in Phase 2">
@@ -60,6 +68,9 @@ export function Navbar() {
               {label}
             </Link>
           ))}
+          <Link href="/membership" onClick={() => setMenuOpen(false)} className={pathname === "/membership" ? "is-active" : ""}>
+            Membership
+          </Link>
         </nav>
       )}
     </header>
