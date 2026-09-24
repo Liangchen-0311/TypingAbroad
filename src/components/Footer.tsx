@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
+import { ICP_REGISTRATION_NUMBER, SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 
 export function Footer() {
   return (
@@ -14,6 +14,9 @@ export function Footer() {
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/refund">Refunds</Link>
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
+            {ICP_REGISTRATION_NUMBER}
+          </a>
           <span>© 2026</span>
         </div>
       </div>

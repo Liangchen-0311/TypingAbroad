@@ -4,6 +4,7 @@ export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || "TypeAbroad";
 export const SITE_TAGLINE = "Type better. Write better.";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://typeabroad.com").replace(/\/$/, "");
 export const COMPANY_NAME = "深圳市桃蹊教育科技有限公司";
+export const ICP_REGISTRATION_NUMBER = "粤ICP备2026144625号";
 
 export const DEFAULT_PREFERENCES: TypingPreferences = {
   version: 2,
