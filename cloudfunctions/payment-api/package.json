@@ -1,0 +1,15 @@
+{
+  "name": "typeabroad-payment-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@cloudbase/js-sdk": "^3.10.1",
+    "alipay-sdk": "4.14.0"
+  }
+}

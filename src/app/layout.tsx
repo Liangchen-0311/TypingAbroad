@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { AccountProvider } from "@/components/AccountProvider";
 import { MembershipProvider } from "@/components/MembershipProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
@@ -55,13 +56,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <body>
         <ThemeProvider>
-          <MembershipProvider>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-            <Analytics />
-            <SpeedInsights sampleRate={0.5} />
-          </MembershipProvider>
+          <AccountProvider>
+            <MembershipProvider>
+              <Navbar />
+              <main>{children}</main>
+              <Footer />
+              <Analytics />
+              <SpeedInsights sampleRate={0.5} />
+            </MembershipProvider>
+          </AccountProvider>
         </ThemeProvider>
       </body>
     </html>

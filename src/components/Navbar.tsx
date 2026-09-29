@@ -8,6 +8,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { SettingsDialog } from "./SettingsDialog";
 import { ThemeToggle } from "./ThemeToggle";
 import { useMembership } from "./MembershipProvider";
+import { useAccount } from "./AccountProvider";
 import { hasMemberAccess } from "@/lib/membership";
 
 const links = [
@@ -23,6 +24,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const { membership } = useMembership();
+  const { user, loading: accountLoading, openAccount } = useAccount();
   const isMember = hasMemberAccess(membership);
 
   return (
@@ -46,9 +48,9 @@ export function Navbar() {
           </Link>
           <ThemeToggle />
           <SettingsDialog />
-          <button className="profile-button" type="button" disabled title="Account sync arrives in Phase 2">
+          <button className="profile-button" type="button" onClick={openAccount} aria-label={user ? "Open your account" : "Sign in or register"}>
             <UserRound aria-hidden="true" />
-            <span>Guest</span>
+            <span>{accountLoading ? "Account" : user ? "Account" : "Sign in"}</span>
           </button>
           <button
             className="icon-button mobile-menu-button"
@@ -71,6 +73,9 @@ export function Navbar() {
           <Link href="/membership" onClick={() => setMenuOpen(false)} className={pathname === "/membership" ? "is-active" : ""}>
             Membership
           </Link>
+          <button type="button" onClick={() => { setMenuOpen(false); openAccount(); }}>
+            {user ? "Your account" : "Sign in / Register"}
+          </button>
         </nav>
       )}
     </header>

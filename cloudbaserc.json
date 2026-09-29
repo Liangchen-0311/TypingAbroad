@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "envId": "taoxi-typeabroad-d8efejfe975f276",
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "typeabroad-payment-api",
+      "dir": "cloudfunctions/payment-api",
+      "type": "HTTP",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "timeout": 15,
+      "memorySize": 256,
+      "description": "TypeAbroad account membership and Alipay payment API",
+      "installDependency": true
+    }
+  ]
+}

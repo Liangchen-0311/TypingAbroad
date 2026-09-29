@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, CircleAlert, Clock3, RefreshCw } from "lucide
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMembership } from "./MembershipProvider";
+import { useAccount } from "./AccountProvider";
 import { getPaymentOrderStatus, paymentIsConfigured, type PaymentOrderStatus } from "@/lib/paymentClient";
 
 type ResultState = PaymentOrderStatus | "checking" | "unavailable" | "missing";
@@ -14,6 +15,7 @@ export function PaymentResultPanel() {
   const orderId = (searchParams.get("order_id") ?? searchParams.get("out_trade_no"))?.trim() ?? "";
   const [state, setState] = useState<ResultState>(orderId ? "checking" : "missing");
   const { refreshMembership } = useMembership();
+  const { user, loading: accountLoading, getAuthHeaders, openAccount } = useAccount();
 
   const checkOrder = useCallback(async () => {
     if (!orderId) {
@@ -24,15 +26,21 @@ export function PaymentResultPanel() {
       setState("unavailable");
       return;
     }
+    if (accountLoading) return;
+    if (!user) {
+      setState("unavailable");
+      return;
+    }
     setState("checking");
     try {
-      const nextState = await getPaymentOrderStatus(orderId);
+      const authHeaders = await getAuthHeaders();
+      const nextState = await getPaymentOrderStatus(orderId, authHeaders);
       setState(nextState);
       if (nextState === "paid") await refreshMembership();
     } catch {
       setState("unavailable");
     }
-  }, [orderId, refreshMembership]);
+  }, [accountLoading, getAuthHeaders, orderId, refreshMembership, user]);
 
   useEffect(() => {
     void checkOrder();
@@ -66,9 +74,13 @@ export function PaymentResultPanel() {
         {paid ? (
           <Link className="primary-button" href="/practice">Start practising <ArrowRight aria-hidden="true" /></Link>
         ) : (
-          <button className="secondary-button" type="button" onClick={() => void checkOrder()} disabled={state === "checking"}>
-            <RefreshCw aria-hidden="true" /> {state === "checking" ? "Checking…" : "Check again"}
-          </button>
+          user ? (
+            <button className="secondary-button" type="button" onClick={() => void checkOrder()} disabled={state === "checking"}>
+              <RefreshCw aria-hidden="true" /> {state === "checking" ? "Checking…" : "Check again"}
+            </button>
+          ) : (
+            <button className="secondary-button" type="button" onClick={openAccount}>Sign in to check</button>
+          )
         )}
         <Link className="text-button" href="/membership">Back to membership</Link>
       </div>

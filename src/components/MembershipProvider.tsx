@@ -6,6 +6,7 @@ import {
   type MembershipAccessMode,
   type MembershipSnapshot,
 } from "@/lib/membership";
+import { useAccount } from "./AccountProvider";
 
 interface MembershipContextValue {
   membership: MembershipSnapshot;
@@ -30,8 +31,9 @@ function isMembershipSnapshot(value: unknown): value is MembershipSnapshot {
 }
 
 export function MembershipProvider({ children }: { children: React.ReactNode }) {
+  const { user, loading: accountLoading, getAuthHeaders } = useAccount();
   const [membership, setMembership] = useState<MembershipSnapshot>(FREE_MEMBERSHIP);
-  const [loading, setLoading] = useState(Boolean(process.env.NEXT_PUBLIC_ACCOUNT_API_BASE));
+  const [loading, setLoading] = useState(Boolean(process.env.NEXT_PUBLIC_ACCOUNT_API_BASE) && accountLoading);
 
   const refreshMembership = useCallback(async () => {
     const apiBase = process.env.NEXT_PUBLIC_ACCOUNT_API_BASE?.replace(/\/$/, "");
@@ -40,12 +42,18 @@ export function MembershipProvider({ children }: { children: React.ReactNode }) 
       setLoading(false);
       return;
     }
+    if (!user) {
+      setMembership(FREE_MEMBERSHIP);
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     try {
+      const authHeaders = await getAuthHeaders();
       const response = await fetch(`${apiBase}/v1/me/membership`, {
         credentials: "include",
-        headers: { Accept: "application/json" },
+        headers: { Accept: "application/json", ...authHeaders },
       });
       if (!response.ok) throw new Error("Membership request failed");
       const payload: unknown = await response.json();
@@ -55,7 +63,7 @@ export function MembershipProvider({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeaders, user]);
 
   useEffect(() => {
     void refreshMembership();

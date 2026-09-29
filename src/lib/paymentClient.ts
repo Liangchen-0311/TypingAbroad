@@ -2,8 +2,6 @@ import type { MembershipPlanId } from "./membership";
 
 export interface CreatePaymentOrderInput {
   planId: MembershipPlanId;
-  mobile: string;
-  returnUrl: string;
 }
 
 export interface PaymentOrder {
@@ -25,7 +23,7 @@ function isPaymentOrder(value: unknown): value is PaymentOrder {
   return typeof candidate.orderId === "string" && typeof candidate.checkoutUrl === "string";
 }
 
-export async function createAlipayOrder(input: CreatePaymentOrderInput) {
+export async function createAlipayOrder(input: CreatePaymentOrderInput, authHeaders: Record<string, string>) {
   if (!paymentApiBase) throw new Error("PAYMENT_NOT_CONFIGURED");
   const response = await fetch(`${paymentApiBase}/v1/orders/alipay`, {
     method: "POST",
@@ -33,6 +31,7 @@ export async function createAlipayOrder(input: CreatePaymentOrderInput) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      ...authHeaders,
     },
     body: JSON.stringify(input),
   });
@@ -45,11 +44,11 @@ export async function createAlipayOrder(input: CreatePaymentOrderInput) {
   return payload;
 }
 
-export async function getPaymentOrderStatus(orderId: string) {
+export async function getPaymentOrderStatus(orderId: string, authHeaders: Record<string, string>) {
   if (!paymentApiBase) throw new Error("PAYMENT_NOT_CONFIGURED");
   const response = await fetch(`${paymentApiBase}/v1/orders/${encodeURIComponent(orderId)}/status`, {
     credentials: "include",
-    headers: { Accept: "application/json" },
+    headers: { Accept: "application/json", ...authHeaders },
     cache: "no-store",
   });
   if (!response.ok) throw new Error("ORDER_STATUS_FAILED");

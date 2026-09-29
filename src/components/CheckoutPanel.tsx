@@ -1,34 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, LockKeyhole, MonitorUp, ShieldCheck, UserRound } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { COMPANY_NAME, SITE_URL } from "@/lib/constants";
+import { COMPANY_NAME } from "@/lib/constants";
 import { formatPrice, getMembershipPlan } from "@/lib/membership";
 import { createAlipayOrder, paymentIsConfigured } from "@/lib/paymentClient";
+import { useAccount } from "./AccountProvider";
 
 type SubmitState = "idle" | "loading" | "error";
-
-function validMainlandMobile(value: string) {
-  return /^1[3-9]\d{9}$/.test(value);
-}
 
 export function CheckoutPanel() {
   const searchParams = useSearchParams();
   const plan = useMemo(() => getMembershipPlan(searchParams.get("plan")), [searchParams]);
-  const [mobile, setMobile] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [state, setState] = useState<SubmitState>("idle");
   const [message, setMessage] = useState("");
   const configured = paymentIsConfigured();
+  const { user, loading: accountLoading, openAccount, getAuthHeaders } = useAccount();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const normalizedMobile = mobile.trim();
-    if (!validMainlandMobile(normalizedMobile)) {
+    if (!user) {
       setState("error");
-      setMessage("请输入有效的中国大陆手机号码，以便支付后绑定会员权益。");
+      setMessage("请先登录或注册账号，再继续付款。会员权益会自动绑定到这个账号。");
+      openAccount();
       return;
     }
     if (!accepted) {
@@ -45,11 +42,8 @@ export function CheckoutPanel() {
     setState("loading");
     setMessage("");
     try {
-      const order = await createAlipayOrder({
-        planId: plan.id,
-        mobile: normalizedMobile,
-        returnUrl: `${SITE_URL}/payment/result`,
-      });
+      const authHeaders = await getAuthHeaders();
+      const order = await createAlipayOrder({ planId: plan.id }, authHeaders);
       window.location.assign(order.checkoutUrl);
     } catch {
       setState("error");
@@ -81,7 +75,7 @@ export function CheckoutPanel() {
         <div className="checkout-payment__heading">
           <span>Secure checkout</span>
           <h2 id="checkout-payment-title">Continue with Alipay</h2>
-          <p>付款成功后，会员权益将绑定到下方手机号。支付宝支付状态由服务端回调确认。</p>
+          <p>付款成功后，会员权益会自动绑定到当前 TypeAbroad 账号。支付状态由服务端安全确认。</p>
         </div>
 
         {!configured && (
@@ -92,28 +86,19 @@ export function CheckoutPanel() {
         )}
 
         <form className="checkout-form" onSubmit={handleSubmit} noValidate>
-          <label htmlFor="checkout-mobile">
-            <span>会员绑定手机号</span>
-            <input
-              id="checkout-mobile"
-              name="mobile"
-              type="tel"
-              inputMode="numeric"
-              autoComplete="tel"
-              value={mobile}
-              aria-invalid={state === "error" && !validMainlandMobile(mobile.trim())}
-              aria-describedby="checkout-helper"
-              onChange={(event) => {
-                setMobile(event.target.value.replace(/\D/g, "").slice(0, 11));
-                if (state === "error") {
-                  setState("idle");
-                  setMessage("");
-                }
-              }}
-              placeholder="138 0000 0000"
-            />
-          </label>
-          <p id="checkout-helper" className="checkout-form__helper">用于开通和找回会员权益，不会展示给其他用户。</p>
+          <div className={`checkout-account${user ? " is-signed-in" : ""}`}>
+            <UserRound aria-hidden="true" />
+            <div>
+              <span>{user ? "Account ready" : "Account required"}</span>
+              <strong>{accountLoading ? "Checking account…" : user ? "会员将绑定到当前账号" : "请先登录或注册"}</strong>
+            </div>
+            <button className="text-button" type="button" onClick={openAccount}>{user ? "View account" : "Sign in"}</button>
+          </div>
+
+          <div className="checkout-device-note">
+            <MonitorUp aria-hidden="true" />
+            <p><strong>请在电脑上完成付款。</strong><span>当前已开通支付宝电脑网站支付，进入支付宝后可扫码或按页面提示付款。</span></p>
+          </div>
 
           <label className="checkout-consent">
             <input
@@ -130,7 +115,7 @@ export function CheckoutPanel() {
             <span>我已阅读并同意 <Link href="/terms">服务条款</Link>、<Link href="/privacy">隐私政策</Link> 与 <Link href="/refund">退款规则</Link>。</span>
           </label>
 
-          <button className="primary-button checkout-submit" type="submit" data-state={state} disabled={state === "loading"}>
+          <button className="primary-button checkout-submit" type="submit" data-state={state} disabled={state === "loading" || accountLoading}>
             {state === "loading" ? "Creating order…" : configured ? "Continue to Alipay" : "Payment opening soon"}
             {state !== "loading" && <ArrowRight aria-hidden="true" />}
           </button>

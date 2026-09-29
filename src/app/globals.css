@@ -276,6 +276,142 @@ button:disabled,
   background: var(--color-paper);
 }
 
+.mobile-menu button {
+  min-height: 2.75rem;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-neutral);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: start;
+}
+
+.account-dialog-backdrop {
+  position: fixed;
+  z-index: calc(var(--z-sticky) + 20);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-md);
+  background: var(--color-overlay);
+}
+
+.account-dialog {
+  display: grid;
+  width: min(100%, 31rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-paper-2);
+  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 0.26);
+}
+
+.account-dialog > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+}
+
+.account-dialog > header > div {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.account-dialog > header span,
+.account-dialog__signed-in span {
+  color: var(--color-accent);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-dialog > header h2 {
+  font-size: var(--text-xl);
+}
+
+.account-dialog__form,
+.account-dialog__signed-in {
+  display: grid;
+  gap: var(--space-md);
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+}
+
+.account-dialog__form > p,
+.account-dialog__signed-in > p {
+  color: var(--color-neutral);
+  font-size: var(--text-sm);
+}
+
+.account-dialog__form > label {
+  margin-block-end: calc(0rem - var(--space-sm));
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.account-dialog__form > input,
+.account-phone-field {
+  width: 100%;
+  min-height: 3.25rem;
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+}
+
+.account-dialog__form > input {
+  padding-inline: var(--space-md);
+}
+
+.account-phone-field {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.account-phone-field > span {
+  padding-inline: var(--space-md);
+  border-inline-end: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-neutral);
+  font-family: var(--font-code);
+}
+
+.account-phone-field input {
+  min-width: 0;
+  height: 100%;
+  padding-inline: var(--space-md);
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+
+.account-dialog__form > svg,
+.account-dialog__signed-in > svg {
+  width: var(--text-2xl);
+  height: var(--text-2xl);
+  color: var(--color-accent);
+  stroke-width: 1.5;
+}
+
+.account-dialog__signed-in > div {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.account-dialog__signed-in strong {
+  font-size: var(--text-lg);
+}
+
+.account-dialog__message {
+  min-height: 1lh;
+  color: var(--color-accent) !important;
+}
+
 .settings-dialog {
   position: fixed;
   inset: 0;
@@ -4096,47 +4232,48 @@ code {
   gap: var(--space-xs);
 }
 
-.checkout-form > label:first-child {
+.checkout-account,
+.checkout-device-note {
   display: grid;
-  gap: var(--space-xs);
-  color: var(--color-muted);
-  font-size: var(--text-sm);
-}
-
-.checkout-form input[type="tel"] {
-  width: 100%;
-  min-height: 3rem;
-  padding-inline: var(--space-md) var(--space-xl);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-md);
   border: var(--rule-hair) solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
-  outline: 2px solid transparent;
-  outline-offset: 1px;
   background: var(--color-paper);
-  color: var(--color-ink);
 }
 
-.checkout-form input[type="tel"]:focus-visible {
-  outline-color: var(--color-focus);
+.checkout-account > svg,
+.checkout-device-note > svg {
+  width: 1.2rem;
+  color: var(--color-accent);
 }
 
-.checkout-form input[type="tel"][aria-invalid="true"] {
-  border-color: var(--color-error);
+.checkout-account > div,
+.checkout-device-note p {
+  display: grid;
+  gap: var(--space-3xs);
 }
 
-.checkout-form input[type="tel"]:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-  color: var(--color-muted);
-}
-
-.checkout-form input::placeholder {
-  color: var(--color-muted);
-}
-
-.checkout-form__helper {
-  min-height: 1lh;
+.checkout-account span,
+.checkout-device-note span {
   color: var(--color-muted);
   font-size: var(--text-xs);
+}
+
+.checkout-account.is-signed-in {
+  border-color: var(--color-accent);
+}
+
+.checkout-device-note {
+  grid-template-columns: auto minmax(0, 1fr);
+  margin-block-start: var(--space-xs);
+  border-style: dashed;
+}
+
+.checkout-device-note strong {
+  font-size: var(--text-sm);
 }
 
 .checkout-consent {
