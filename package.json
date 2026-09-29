@@ -10,6 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:static": "STATIC_EXPORT=1 next build",
+    "deploy:cloudbase": "npm run build:static && npx --yes --package @cloudbase/cli tcb hosting deploy out -e taoxi-typeabroad-d8efejfe975f276 --safe --verify --entry index.html",
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
