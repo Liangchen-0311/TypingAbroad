@@ -25,6 +25,72 @@ function eventIdFor(params) {
   return crypto.createHash("sha256").update(basis).digest("hex");
 }
 
+function eventIdForQuery({ orderId, tradeNo, tradeStatus }) {
+  return crypto
+    .createHash("sha256")
+    .update(`query:${orderId}:${tradeNo}:${tradeStatus}`)
+    .digest("hex");
+}
+
+function parseAlipayPaidAt(value, fallback) {
+  if (typeof value !== "string") return fallback;
+  const match = value.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})$/);
+  if (!match) return fallback;
+  const parsed = new Date(`${match[1]}T${match[2]}+08:00`);
+  return Number.isFinite(parsed.getTime()) ? parsed : fallback;
+}
+
+function orderIsExpired(order, at) {
+  const createdAt = new Date(order.createdAt);
+  return Number.isFinite(createdAt.getTime()) && at.getTime() - createdAt.getTime() > 35 * 60 * 1000;
+}
+
+async function reconcilePendingOrder({ order, store, alipay, config, at = new Date() }) {
+  if (!order || order.status !== "pending") return order;
+
+  const result = await alipay.exec(
+    "alipay.trade.query",
+    { bizContent: { outTradeNo: order.orderId } },
+    { validateSign: true },
+  );
+  const code = typeof result?.code === "string" ? result.code : "";
+  const subCode = typeof result?.subCode === "string" ? result.subCode : "";
+
+  if (code !== "10000") {
+    if (subCode === "ACQ.TRADE_NOT_EXIST" && orderIsExpired(order, at)) {
+      await store.closeOrder({ orderId: order.orderId, closedAt: at });
+      return await store.getOrder(order.orderId);
+    }
+    return order;
+  }
+
+  if (result.outTradeNo !== order.orderId) throw new Error("ALIPAY_QUERY_ORDER_MISMATCH");
+  const tradeStatus = typeof result.tradeStatus === "string" ? result.tradeStatus : "";
+
+  if (tradeStatus === "TRADE_CLOSED") {
+    await store.closeOrder({ orderId: order.orderId, closedAt: at });
+    return await store.getOrder(order.orderId);
+  }
+  if (tradeStatus !== "TRADE_SUCCESS" && tradeStatus !== "TRADE_FINISHED") return order;
+
+  const tradeNo = typeof result.tradeNo === "string" ? result.tradeNo : "";
+  if (!tradeNo) throw new Error("ALIPAY_QUERY_TRADE_NUMBER_MISSING");
+  if (parseAmountToFen(String(result.totalAmount ?? "")) !== order.amountFen) {
+    throw new Error("ALIPAY_QUERY_AMOUNT_MISMATCH");
+  }
+  if (config.alipaySellerId && result.sellerId && result.sellerId !== config.alipaySellerId) {
+    throw new Error("ALIPAY_QUERY_SELLER_MISMATCH");
+  }
+
+  await store.activateOrder({
+    orderId: order.orderId,
+    tradeNo,
+    eventId: eventIdForQuery({ orderId: order.orderId, tradeNo, tradeStatus }),
+    paidAt: parseAlipayPaidAt(result.sendPayDate, at),
+  });
+  return await store.getOrder(order.orderId);
+}
+
 function requireUser(req) {
   const user = parseCloudbaseUser(req);
   if (!user) throw new HttpError(401, "AUTH_REQUIRED", "Please sign in first.");
@@ -84,6 +150,20 @@ function createApplication({ store, alipay, config, now = () => new Date() }) {
     sendText(res, 200, "success");
   }
 
+  async function reconcileWithoutBlocking(order, context) {
+    if (!order || order.status !== "pending") return order;
+    try {
+      return await reconcilePendingOrder({ order, store, alipay, config, at: now() });
+    } catch (error) {
+      console.error("Alipay order reconciliation failed", {
+        context,
+        orderId: order.orderId,
+        error: error instanceof Error ? error.message : "unknown",
+      });
+      return order;
+    }
+  }
+
   return async function application(req, res) {
     const path = requestPath(req);
     try {
@@ -99,6 +179,8 @@ function createApplication({ store, alipay, config, now = () => new Date() }) {
 
       if (req.method === "GET" && path === "/v1/me/membership") {
         const { uid } = requireUser(req);
+        const pendingOrder = await store.getLatestPendingOrder(uid);
+        await reconcileWithoutBlocking(pendingOrder, "membership");
         sendJson(res, 200, await store.getMembership(uid));
         return;
       }
@@ -135,8 +217,9 @@ function createApplication({ store, alipay, config, now = () => new Date() }) {
       const statusMatch = req.method === "GET" && path.match(/^\/v1\/orders\/([A-Za-z0-9_-]{8,64})\/status$/);
       if (statusMatch) {
         const { uid } = requireUser(req);
-        const order = await store.getOrder(statusMatch[1]);
+        let order = await store.getOrder(statusMatch[1]);
         if (!order || order.uid !== uid) throw new HttpError(404, "ORDER_NOT_FOUND", "Order not found.");
+        order = await reconcileWithoutBlocking(order, "order-status");
         sendJson(res, 200, { orderId: order.orderId, status: order.status });
         return;
       }
@@ -158,4 +241,12 @@ function createApplication({ store, alipay, config, now = () => new Date() }) {
   };
 }
 
-module.exports = { createApplication, createOrderId, eventIdFor };
+module.exports = {
+  createApplication,
+  createOrderId,
+  eventIdFor,
+  eventIdForQuery,
+  orderIsExpired,
+  parseAlipayPaidAt,
+  reconcilePendingOrder,
+};

@@ -51,11 +51,11 @@ export default function PrivacyPage() {
         <section>
           <h2>Membership and payment information</h2>
           <p>
-            When online membership purchasing opens, we will use the mobile number supplied at checkout to
-            bind and recover membership access. Payment is processed by the selected payment provider. We do
+            When you sign in or purchase membership, we use your verified mobile account to bind and recover
+            membership access. Payment is processed by the selected payment provider. We do
             not receive or store your Alipay password, payment password, or complete bank-card details.
             Order identifiers, plan, amount, payment status and necessary contact information may be retained
-            to deliver the service, handle refunds and meet legal or accounting requirements.
+            to deliver the service, investigate exceptional payment disputes and meet legal or accounting requirements.
           </p>
         </section>
         <section>

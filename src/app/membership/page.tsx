@@ -40,7 +40,7 @@ export default function MembershipPage() {
           <h1>Practise without limits.</h1>
           <p>Unlock the full library of high-scoring IELTS and TOEFL model essays, 1,000+ academic words, and deeper mistake review.</p>
           <Link className="primary-button" href="/checkout?plan=half-year">Choose six months <ArrowRight aria-hidden="true" /></Link>
-          <small>一次付费 · 无自动续费 · 支付成功后自动开通</small>
+          <small>一次付费 · 无自动续费 · 支付成功后自动开通 · 开通后不支持无理由退款</small>
         </div>
       </header>
 
@@ -124,14 +124,14 @@ export default function MembershipPage() {
           <details><summary>Will membership renew automatically?</summary><p>No. Both plans are one-time purchases and do not automatically renew.</p></details>
           <details><summary>Where is my practice data stored?</summary><p>The current version stores practice data on this device. Account-based cross-device sync is not included until that feature is explicitly released.</p></details>
           <details><summary>Does membership guarantee a higher exam score?</summary><p>No. TypeAbroad is a typing and language-familiarity tool. It does not guarantee IELTS, TOEFL or admission results.</p></details>
-          <details><summary>Can I request a refund?</summary><p>Refund eligibility depends on whether digital membership has been activated and used. Read the <Link href="/refund">refund rules</Link> before purchase.</p></details>
+          <details><summary>Can I request a refund?</summary><p>会员在付款确认后立即开通。数字化会员权益开通后不支持无理由退款；重复扣款、未成功开通、法律法规另有规定或平台无法正常提供服务的情况除外。付款前请阅读<Link href="/refund">售后规则</Link>。</p></details>
         </div>
       </section>
 
       <footer className="membership-merchant">
         <ShieldCheck aria-hidden="true" />
         <div><span>Service provider</span><strong>{COMPANY_NAME}</strong></div>
-        <div><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/refund">Refunds</Link></div>
+        <div><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/refund">After-sales</Link></div>
       </footer>
     </div>
   );

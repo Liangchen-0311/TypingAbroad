@@ -62,6 +62,19 @@ function createStore(db) {
       return mapOrder(data);
     },
 
+    async getLatestPendingOrder(uid) {
+      const { data, error } = await db
+        .from("payment_orders")
+        .select("*")
+        .eq("uid", uid)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      throwDatabaseError("GET_PENDING_ORDER_FAILED", error);
+      return mapOrder(data);
+    },
+
     async getMembership(uid) {
       const { data, error } = await db
         .from("memberships")
@@ -82,6 +95,18 @@ function createStore(db) {
       });
       throwDatabaseError("ACTIVATE_ORDER_FAILED", error);
       return data;
+    },
+
+    async closeOrder({ orderId, closedAt }) {
+      const { error } = await db
+        .from("payment_orders")
+        .update({
+          status: "closed",
+          updated_at: closedAt.toISOString(),
+        })
+        .eq("order_id", orderId)
+        .eq("status", "pending");
+      throwDatabaseError("CLOSE_ORDER_FAILED", error);
     },
   };
 }

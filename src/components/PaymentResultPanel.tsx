@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircleAlert, Clock3, RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMembership } from "./MembershipProvider";
 import { useAccount } from "./AccountProvider";
@@ -14,6 +14,7 @@ export function PaymentResultPanel() {
   const searchParams = useSearchParams();
   const orderId = (searchParams.get("order_id") ?? searchParams.get("out_trade_no"))?.trim() ?? "";
   const [state, setState] = useState<ResultState>(orderId ? "checking" : "missing");
+  const automaticChecks = useRef(0);
   const { refreshMembership } = useMembership();
   const { user, loading: accountLoading, getAuthHeaders, openAccount } = useAccount();
 
@@ -46,6 +47,15 @@ export function PaymentResultPanel() {
     void checkOrder();
   }, [checkOrder]);
 
+  useEffect(() => {
+    if (state !== "pending" || automaticChecks.current >= 12) return;
+    const timer = window.setTimeout(() => {
+      automaticChecks.current += 1;
+      void checkOrder();
+    }, 2500);
+    return () => window.clearTimeout(timer);
+  }, [checkOrder, state]);
+
   const paid = state === "paid";
   const pending = state === "pending" || state === "checking";
 
@@ -67,7 +77,7 @@ export function PaymentResultPanel() {
       <p>
         {paid
           ? "You can now return to practice with full member access."
-          : "Membership is never activated from a browser redirect alone. We wait for the verified payment result from the server."}
+          : "We verify the signed Alipay callback and actively query Alipay when needed. You can keep this page open while the order is reconciled."}
       </p>
       {orderId && <small>Order {orderId}</small>}
       <div className="payment-result__actions">
@@ -78,7 +88,10 @@ export function PaymentResultPanel() {
           </>
         ) : (
           user ? (
-            <button className="secondary-button" type="button" onClick={() => void checkOrder()} disabled={state === "checking"}>
+            <button className="secondary-button" type="button" onClick={() => {
+              automaticChecks.current = 0;
+              void checkOrder();
+            }} disabled={state === "checking"}>
               <RefreshCw aria-hidden="true" /> {state === "checking" ? "Checking…" : "Check again"}
             </button>
           ) : (

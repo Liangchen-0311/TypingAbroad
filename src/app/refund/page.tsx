@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { COMPANY_NAME, SITE_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Refund Policy",
-  description: `Refund rules for ${SITE_NAME} digital memberships.`,
+  title: "After-sales Policy",
+  description: `After-sales and non-refundable purchase rules for ${SITE_NAME} digital memberships.`,
   alternates: { canonical: "/refund" },
 };
 
@@ -11,32 +11,32 @@ export default function RefundPage() {
   return (
     <article className="legal-page page-shell">
       <header className="page-heading">
-        <h1>Refund Policy</h1>
-        <p>退款规则 · Last updated 7 September 2026</p>
+        <h1>After-sales Policy</h1>
+        <p>售后规则 · Last updated 30 September 2026</p>
       </header>
       <div className="legal-prose">
         <section>
-          <h2>Before activation</h2>
-          <p>如果订单已付款但会员权益因系统原因尚未开通，用户可以联系我们核实订单。确认未开通、未使用后，我们将按原支付路径处理退款。</p>
+          <h2>Payment and activation</h2>
+          <p>用户在付款前应确认会员方案、服务期限和金额。支付结果经服务器确认后，会员权益会立即绑定到付款时登录的 TypeAbroad 账号。</p>
         </section>
         <section>
-          <h2>After activation</h2>
+          <h2>No change-of-mind refunds after activation</h2>
           <p>
-            TypeAbroad 会员属于数字化学习服务。会员权益成功开通并开始使用后，原则上不支持无理由退款；法律法规另有规定，或服务存在无法正常提供的重大问题除外。
+            TypeAbroad 会员属于即时开通的数字化学习服务。付款成功并开通会员权益后，不支持因个人原因、选错方案、未充分使用或改变购买意愿提出的无理由退款。
           </p>
         </section>
         <section>
-          <h2>Duplicate or incorrect payment</h2>
-          <p>如发生重复扣款、金额错误或已付款但订单状态异常，请在发现后尽快联系我们，并提供订单号、付款时间和绑定手机号后四位。请勿通过普通电子邮件发送完整支付账号或验证码。</p>
+          <h2>Payment exceptions</h2>
+          <p>如发生重复扣款、付款成功但会员未开通、金额与订单不一致，或平台无法正常提供已购买的核心服务，请尽快联系我们核验。法律法规另有规定的，从其规定。这些异常处理不构成面向正常已开通订单的无理由退款承诺。</p>
         </section>
         <section>
-          <h2>How refunds are returned</h2>
-          <p>退款审核通过后，将尽量通过原支付渠道退回。到账时间由支付宝及付款银行的处理时间决定。</p>
+          <h2>Exception handling</h2>
+          <p>异常订单经核验确需退回款项时，由工作人员通过原支付订单处理；到账时间由支付宝及付款银行决定。网站不提供用户自助退款入口。</p>
         </section>
         <section>
           <h2>Contact</h2>
           <p>
-            退款问题请发送邮件至 <a href="mailto:support@typeabroad.com">support@typeabroad.com</a>。服务提供方：{COMPANY_NAME}。
+            支付异常请发送邮件至 <a href="mailto:support@typeabroad.com">support@typeabroad.com</a>。请提供 TypeAbroad 订单号、付款时间和绑定手机号后四位，不要发送验证码、支付密码或完整支付账号。服务提供方：{COMPANY_NAME}。
           </p>
         </section>
       </div>

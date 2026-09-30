@@ -12,7 +12,7 @@ export default function TermsPage() {
     <article className="legal-page page-shell">
       <header className="page-heading">
         <h1>Terms</h1>
-        <p>Last updated 7 September 2026</p>
+        <p>Last updated 30 September 2026</p>
       </header>
       <div className="legal-prose">
         <section>
@@ -68,8 +68,10 @@ export default function TermsPage() {
         <section>
           <h2>Refunds</h2>
           <p>
-            Digital membership refund eligibility is described in our <a href="/refund">Refund Policy</a>.
-            Nothing in these terms limits rights that cannot be excluded under applicable law.
+            Membership is a digital service activated immediately after verified payment. Once activated,
+            it is not eligible for a change-of-mind refund. Duplicate charges, failed activation, material
+            inability to provide the purchased service, and rights required by applicable law are handled
+            under our <a href="/refund">After-sales Policy</a>.
           </p>
         </section>
         <section>

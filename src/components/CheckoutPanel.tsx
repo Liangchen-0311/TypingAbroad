@@ -30,7 +30,7 @@ export function CheckoutPanel() {
     }
     if (!accepted) {
       setState("error");
-      setMessage("请先阅读并同意服务条款、隐私政策和退款规则。");
+      setMessage("请先确认会员将在付款后立即开通，并阅读服务条款、隐私政策和售后规则。");
       return;
     }
     if (!configured) {
@@ -76,6 +76,7 @@ export function CheckoutPanel() {
         <div className="checkout-assurances">
           <p><Check aria-hidden="true" /> One-time payment. No automatic renewal.</p>
           <p><ShieldCheck aria-hidden="true" /> Membership opens only after server-side payment confirmation.</p>
+          <p><LockKeyhole aria-hidden="true" /> 付款成功后会员立即开通；数字会员权益开通后不支持无理由退款。</p>
         </div>
         <div className="checkout-unlocks">
           <span>Included after payment</span>
@@ -115,6 +116,14 @@ export function CheckoutPanel() {
             <p><strong>请在电脑上完成付款。</strong><span>当前已开通支付宝电脑网站支付，进入支付宝后可扫码或按页面提示付款。</span></p>
           </div>
 
+          <div className="checkout-final-sale" role="note">
+            <LockKeyhole aria-hidden="true" />
+            <p>
+              <strong>付款前请确认会员方案。</strong>
+              <span>付款成功后会员权益会立即开通。数字化会员服务开通后不支持无理由退款；重复扣款、未成功开通、法律法规另有规定或平台无法正常提供服务的情况除外。</span>
+            </p>
+          </div>
+
           <label className="checkout-consent">
             <input
               type="checkbox"
@@ -127,11 +136,11 @@ export function CheckoutPanel() {
                 }
               }}
             />
-            <span>我已阅读并同意 <Link href="/terms">服务条款</Link>、<Link href="/privacy">隐私政策</Link> 与 <Link href="/refund">退款规则</Link>。</span>
+            <span>我已确认会员方案与金额，并知悉付款成功后将立即开通、开通后不支持无理由退款；同时同意 <Link href="/terms">服务条款</Link>、<Link href="/privacy">隐私政策</Link> 与 <Link href="/refund">售后规则</Link>。</span>
           </label>
 
           <button className="primary-button checkout-submit" type="submit" data-state={state} disabled={state === "loading" || accountLoading}>
-            {state === "loading" ? "Creating order…" : configured ? "Continue to Alipay" : "Payment opening soon"}
+            {state === "loading" ? "Creating order…" : configured ? "同意并前往支付宝" : "Payment opening soon"}
             {state !== "loading" && <ArrowRight aria-hidden="true" />}
           </button>
           <div className="checkout-form__message" aria-live="polite">

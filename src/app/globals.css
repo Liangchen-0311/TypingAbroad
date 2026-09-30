@@ -4363,6 +4363,39 @@ code {
   font-size: var(--text-sm);
 }
 
+.checkout-final-sale {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-sm);
+  align-items: start;
+  margin-block-start: var(--space-sm);
+  padding: var(--space-md);
+  border: var(--rule-hair) solid color-mix(in srgb, var(--color-accent) 64%, var(--color-rule-strong));
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+}
+
+.checkout-final-sale > svg {
+  width: 1.15rem;
+  color: var(--color-accent);
+}
+
+.checkout-final-sale p {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.checkout-final-sale strong {
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+}
+
+.checkout-final-sale span {
+  color: var(--color-neutral);
+  font-size: var(--text-xs);
+  line-height: 1.65;
+}
+
 .checkout-consent {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);

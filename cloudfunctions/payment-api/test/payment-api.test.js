@@ -3,7 +3,14 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { gzipSync } = require("node:zlib");
-const { createOrderId, eventIdFor } = require("../src/app");
+const {
+  createOrderId,
+  eventIdFor,
+  eventIdForQuery,
+  orderIsExpired,
+  parseAlipayPaidAt,
+  reconcilePendingOrder,
+} = require("../src/app");
 const { buildMembershipUpdate, toMembershipSnapshot } = require("../src/membership");
 const { formatAmount, getPlan, parseAmountToFen } = require("../src/plans");
 const { parseCloudbaseUser } = require("../src/request");
@@ -28,6 +35,115 @@ test("order and event identifiers are stable safe values", () => {
   const input = { notify_id: "n1", trade_no: "t1", out_trade_no: orderId, trade_status: "TRADE_SUCCESS" };
   assert.equal(eventIdFor(input), eventIdFor(input));
   assert.match(eventIdFor(input), /^[0-9a-f]{64}$/);
+  assert.match(eventIdForQuery({ orderId, tradeNo: "t1", tradeStatus: "TRADE_SUCCESS" }), /^[0-9a-f]{64}$/);
+});
+
+test("Alipay timestamps are interpreted in China Standard Time", () => {
+  const fallback = new Date("2026-09-30T08:00:00.000Z");
+  assert.equal(parseAlipayPaidAt("2026-09-30 15:51:24", fallback).toISOString(), "2026-09-30T07:51:24.000Z");
+  assert.equal(parseAlipayPaidAt("invalid", fallback), fallback);
+  assert.equal(orderIsExpired({ createdAt: "2026-09-30T07:00:00.000Z" }, fallback), true);
+});
+
+test("active Alipay query compensates a missed callback and activates membership", async () => {
+  const pending = {
+    orderId: "TA20260930querycompensation",
+    uid: "user-1",
+    provider: "alipay",
+    amountFen: 2660,
+    status: "pending",
+    createdAt: "2026-09-30T07:40:00.000Z",
+  };
+  let activation = null;
+  const store = {
+    async activateOrder(input) { activation = input; },
+    async getOrder() { return { ...pending, status: "paid" }; },
+  };
+  const alipay = {
+    async exec(method, params, options) {
+      assert.equal(method, "alipay.trade.query");
+      assert.deepEqual(params, { bizContent: { outTradeNo: pending.orderId } });
+      assert.deepEqual(options, { validateSign: true });
+      return {
+        code: "10000",
+        outTradeNo: pending.orderId,
+        tradeNo: "2026093022000000000001",
+        tradeStatus: "TRADE_SUCCESS",
+        totalAmount: "26.60",
+        sellerId: "seller-1",
+        sendPayDate: "2026-09-30 15:51:24",
+      };
+    },
+  };
+
+  const result = await reconcilePendingOrder({
+    order: pending,
+    store,
+    alipay,
+    config: { alipaySellerId: "seller-1" },
+    at: new Date("2026-09-30T08:00:00.000Z"),
+  });
+
+  assert.equal(result.status, "paid");
+  assert.equal(activation.orderId, pending.orderId);
+  assert.equal(activation.tradeNo, "2026093022000000000001");
+  assert.equal(activation.paidAt.toISOString(), "2026-09-30T07:51:24.000Z");
+});
+
+test("active query refuses to activate an order when the amount differs", async () => {
+  const pending = {
+    orderId: "TA20260930amountmismatch",
+    amountFen: 2660,
+    status: "pending",
+    createdAt: "2026-09-30T07:40:00.000Z",
+  };
+  let activated = false;
+  await assert.rejects(
+    reconcilePendingOrder({
+      order: pending,
+      store: {
+        async activateOrder() { activated = true; },
+      },
+      alipay: {
+        async exec() {
+          return {
+            code: "10000",
+            outTradeNo: pending.orderId,
+            tradeNo: "trade-1",
+            tradeStatus: "TRADE_SUCCESS",
+            totalAmount: "0.01",
+          };
+        },
+      },
+      config: { alipaySellerId: "" },
+      at: new Date("2026-09-30T08:00:00.000Z"),
+    }),
+    /ALIPAY_QUERY_AMOUNT_MISMATCH/,
+  );
+  assert.equal(activated, false);
+});
+
+test("expired Alipay orders that do not exist are closed locally", async () => {
+  const pending = {
+    orderId: "TA20260930expiredorder",
+    status: "pending",
+    createdAt: "2026-09-30T06:00:00.000Z",
+  };
+  let closed = false;
+  const result = await reconcilePendingOrder({
+    order: pending,
+    store: {
+      async closeOrder() { closed = true; },
+      async getOrder() { return { ...pending, status: "closed" }; },
+    },
+    alipay: {
+      async exec() { return { code: "40004", subCode: "ACQ.TRADE_NOT_EXIST" }; },
+    },
+    config: { alipaySellerId: "" },
+    at: new Date("2026-09-30T08:00:00.000Z"),
+  });
+  assert.equal(closed, true);
+  assert.equal(result.status, "closed");
 });
 
 test("CloudBase user context supports plain and gzip-compressed payloads", () => {

@@ -13,7 +13,7 @@ export function Footer() {
           <Link href="/membership">Membership</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
-          <Link href="/refund">Refunds</Link>
+          <Link href="/refund">After-sales</Link>
           <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
             {ICP_REGISTRATION_NUMBER}
           </a>

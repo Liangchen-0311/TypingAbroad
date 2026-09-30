@@ -50,6 +50,11 @@ The server must derive the amount from the plan ID. It must never trust a price 
 
 Response status must be one of `pending`, `paid`, `failed`, or `closed`.
 
+For a locally pending order, the endpoint actively calls `alipay.trade.query`. A signed successful
+query response is checked against the local order number, amount and configured seller before the
+same idempotent membership activation transaction is used. The membership endpoint also reconciles
+the signed-in user's latest pending order so a missed callback cannot leave paid access locked.
+
 ### Read the signed-in user's membership
 
 `GET {NEXT_PUBLIC_ACCOUNT_API_BASE}/v1/me/membership`
@@ -78,3 +83,11 @@ The Alipay asynchronous notification handler must:
 6. Record a minimal audit trail without storing payment passwords or full bank-card data.
 
 The browser return URL is informational only. `PaymentResultPanel` asks the server for order status and never grants membership from URL parameters.
+
+## After-sales policy
+
+Membership is activated immediately after verified payment and is not eligible for a change-of-mind
+refund after activation. The checkout must show this rule before the user accepts the terms and opens
+Alipay. There is no public refund API or self-service refund button. Duplicate charges, failed
+activation, a material inability to provide the purchased service and rights required by law are
+handled manually against the original Alipay order by an authorized operator.
