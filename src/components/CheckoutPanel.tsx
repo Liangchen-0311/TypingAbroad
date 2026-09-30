@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Check, LockKeyhole, MonitorUp, ShieldCheck, User
 import { FormEvent, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { COMPANY_NAME } from "@/lib/constants";
-import { formatPrice, getMembershipPlan } from "@/lib/membership";
+import { MEMBER_PLAN_FEATURES_ZH, formatPrice, getMembershipPlan } from "@/lib/membership";
 import { createAlipayOrder, PaymentApiError, paymentIsConfigured } from "@/lib/paymentClient";
 import { useAccount } from "./AccountProvider";
 
@@ -76,6 +76,13 @@ export function CheckoutPanel() {
         <div className="checkout-assurances">
           <p><Check aria-hidden="true" /> One-time payment. No automatic renewal.</p>
           <p><ShieldCheck aria-hidden="true" /> Membership opens only after server-side payment confirmation.</p>
+        </div>
+        <div className="checkout-unlocks">
+          <span>Included after payment</span>
+          <ul>
+            {MEMBER_PLAN_FEATURES_ZH.map((feature) => <li key={feature}><Check aria-hidden="true" /> {feature}</li>)}
+          </ul>
+          <small>付款成功并由服务器确认后，上述权限会自动绑定到当前手机号账号。</small>
         </div>
       </section>
 

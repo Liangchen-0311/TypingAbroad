@@ -45,7 +45,7 @@ export const MEMBERSHIP_PLANS: Record<MembershipPlanId, MembershipPlan> = {
 };
 
 export const MEMBERSHIP_ACCESS_MODE: MembershipAccessMode =
-  process.env.NEXT_PUBLIC_MEMBERSHIP_ACCESS_MODE === "live" ? "live" : "preview";
+  process.env.NEXT_PUBLIC_MEMBERSHIP_ACCESS_MODE === "preview" ? "preview" : "live";
 
 export const FREE_ARTICLE_IDS = new Set([
   "ielts-tech-001",
@@ -70,11 +70,19 @@ export const FREE_PLAN_FEATURES = [
 ] as const;
 
 export const MEMBER_PLAN_FEATURES = [
-  "The complete IELTS and TOEFL model essay library",
+  "The complete IELTS, TOEFL and Academic English model essay library",
   "All 1,000+ academic words and categories",
   "10, 20 and 40-word sessions",
   "Unlimited mistake review in original context",
   "Complete progress history on this device",
+] as const;
+
+export const MEMBER_PLAN_FEATURES_ZH = [
+  "完整 IELTS、TOEFL 与 Academic English 范文库",
+  "全部 1,000+ 学术写作单词与分类",
+  "10、20 与 40 词练习 session",
+  "不限数量的错词原句复习",
+  "本设备上的完整练习历史",
 ] as const;
 
 export function getMembershipPlan(value?: string | null) {

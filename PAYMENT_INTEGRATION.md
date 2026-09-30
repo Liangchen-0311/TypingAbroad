@@ -1,16 +1,16 @@
 # TypeAbroad payment integration
 
-The public Membership and Checkout pages are safe to deploy before Alipay approval. They run in `preview` mode, keep current practice content open, and never simulate a successful payment.
+The account and Alipay APIs are deployed, and production now runs in `live` mode. Free and member access are separated in the client experience, and a successful membership is always read from the authenticated server endpoint.
 
 ## Launch variables
 
 ```text
-NEXT_PUBLIC_MEMBERSHIP_ACCESS_MODE=preview
-NEXT_PUBLIC_ACCOUNT_API_BASE=
-NEXT_PUBLIC_PAYMENT_API_BASE=
+NEXT_PUBLIC_MEMBERSHIP_ACCESS_MODE=live
+NEXT_PUBLIC_ACCOUNT_API_BASE=https://typeabroad.com/api
+NEXT_PUBLIC_PAYMENT_API_BASE=https://typeabroad.com/api
 ```
 
-Keep `NEXT_PUBLIC_MEMBERSHIP_ACCESS_MODE=preview` until the account and payment APIs below are deployed and tested. Then switch it to `live` in the production build.
+Use `preview` only for a temporary review build where all practice content must stay open. The application defaults to `live` when this variable is omitted so a production build cannot silently expose member access.
 
 Alipay application IDs, merchant private keys, Alipay public keys and webhook secrets are server-only values. Never expose them through a `NEXT_PUBLIC_` variable or commit them to Git.
 

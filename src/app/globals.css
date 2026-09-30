@@ -3871,6 +3871,60 @@ code {
   max-width: 74ch;
 }
 
+.membership-status-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-md);
+  align-items: start;
+  padding-block: var(--space-lg);
+  border-block: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.membership-status-card > svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--color-accent);
+  stroke-width: 1.75;
+}
+
+.membership-status-card > div {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.membership-status-card span,
+.checkout-unlocks > span {
+  color: var(--color-accent);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.membership-status-card strong {
+  font-size: var(--text-md);
+}
+
+.membership-status-card p {
+  max-width: 68ch;
+  color: var(--color-neutral);
+  font-size: var(--text-sm);
+}
+
+.membership-status-card.is-member {
+  border-color: var(--color-success);
+}
+
+.membership-status-card.is-member > svg {
+  color: var(--color-success);
+}
+
+.membership-status-card > .text-button {
+  grid-column: 2;
+  justify-self: start;
+}
+
 .membership-plans,
 .membership-access,
 .membership-process,
@@ -4204,6 +4258,39 @@ code {
   color: var(--color-success);
 }
 
+.checkout-unlocks {
+  display: grid;
+  gap: var(--space-sm);
+  padding-block: var(--space-lg);
+  border-block: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.checkout-unlocks ul {
+  display: grid;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  color: var(--color-neutral);
+  font-size: var(--text-sm);
+  list-style: none;
+}
+
+.checkout-unlocks li {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: flex-start;
+}
+
+.checkout-unlocks li svg {
+  flex: 0 0 auto;
+  width: 1rem;
+  color: var(--color-success);
+}
+
+.checkout-unlocks small {
+  color: var(--color-muted);
+}
+
 .checkout-payment {
   padding-block-start: var(--space-xl);
   border-block-start: var(--rule-hair) solid var(--color-rule-strong);
@@ -4413,6 +4500,16 @@ code {
 
   .member-gate {
     grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .membership-status-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .membership-status-card > .text-button {
+    grid-column: auto;
+    justify-self: end;
   }
 
   .membership-plan {

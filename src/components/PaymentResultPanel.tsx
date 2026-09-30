@@ -72,7 +72,10 @@ export function PaymentResultPanel() {
       {orderId && <small>Order {orderId}</small>}
       <div className="payment-result__actions">
         {paid ? (
-          <Link className="primary-button" href="/practice">Start practising <ArrowRight aria-hidden="true" /></Link>
+          <>
+            <Link className="primary-button" href="/library">Open full essay library <ArrowRight aria-hidden="true" /></Link>
+            <Link className="secondary-button" href="/words">Practise all word categories</Link>
+          </>
         ) : (
           user ? (
             <button className="secondary-button" type="button" onClick={() => void checkOrder()} disabled={state === "checking"}>

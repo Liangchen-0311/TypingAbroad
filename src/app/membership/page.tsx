@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { MembershipStatusCard } from "@/components/MembershipStatusCard";
 import { COMPANY_NAME } from "@/lib/constants";
 import {
   FREE_PLAN_FEATURES,
@@ -42,6 +43,8 @@ export default function MembershipPage() {
           <small>一次付费 · 无自动续费 · 支付成功后自动开通</small>
         </div>
       </header>
+
+      <MembershipStatusCard />
 
       {MEMBERSHIP_ACCESS_MODE === "preview" && (
         <aside className="membership-preview-note">

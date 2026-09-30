@@ -1,13 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
+  MEMBERSHIP_ACCESS_MODE,
   canAccessArticle,
   canAccessWordCategory,
+  canAccessWordSessionLength,
   getMembershipPlan,
   hasMemberAccess,
   isFreeArticle,
 } from "./membership";
 
 describe("membership access", () => {
+  it("defaults production builds to live access control", () => {
+    expect(MEMBERSHIP_ACCESS_MODE).toBe("live");
+  });
+
   it("keeps the six selected essay samples free", () => {
     expect(isFreeArticle("ielts-tech-001")).toBe(true);
     expect(isFreeArticle("toefl-email-003")).toBe(true);
@@ -23,6 +29,8 @@ describe("membership access", () => {
     expect(canAccessArticle("ielts-work-006", { tier: "member" }, "live")).toBe(true);
     expect(canAccessWordCategory("Change", { tier: "free" }, "live")).toBe(false);
     expect(canAccessWordCategory("Evidence", { tier: "free" }, "live")).toBe(true);
+    expect(canAccessWordSessionLength(20, { tier: "free" }, "live")).toBe(false);
+    expect(canAccessWordSessionLength(40, { tier: "member" }, "live")).toBe(true);
   });
 
   it("rejects an expired membership", () => {
