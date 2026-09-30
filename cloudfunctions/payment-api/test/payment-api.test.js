@@ -2,9 +2,11 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const { gzipSync } = require("node:zlib");
 const { createOrderId, eventIdFor } = require("../src/app");
 const { buildMembershipUpdate, toMembershipSnapshot } = require("../src/membership");
 const { formatAmount, getPlan, parseAmountToFen } = require("../src/plans");
+const { parseCloudbaseUser } = require("../src/request");
 
 test("server plan catalogue owns the charged amounts", () => {
   assert.equal(getPlan("half-year").amountFen, 2660);
@@ -26,6 +28,19 @@ test("order and event identifiers are stable safe values", () => {
   const input = { notify_id: "n1", trade_no: "t1", out_trade_no: orderId, trade_status: "TRADE_SUCCESS" };
   assert.equal(eventIdFor(input), eventIdFor(input));
   assert.match(eventIdFor(input), /^[0-9a-f]{64}$/);
+});
+
+test("CloudBase user context supports plain and gzip-compressed payloads", () => {
+  const plain = Buffer.from(JSON.stringify({ uid: "plain-user-123" })).toString("base64");
+  const compressed = gzipSync(JSON.stringify({ userId: "compressed-user-456" })).toString("base64");
+
+  assert.deepEqual(parseCloudbaseUser({ headers: { "x-cloudbase-context": plain } }), {
+    uid: "plain-user-123",
+  });
+  assert.deepEqual(parseCloudbaseUser({ headers: { "x-cloudbase-context": compressed } }), {
+    uid: "compressed-user-456",
+  });
+  assert.equal(parseCloudbaseUser({ headers: { "x-cloudbase-context": "not-valid-context" } }), null);
 });
 
 test("six-month purchases extend an active membership", () => {

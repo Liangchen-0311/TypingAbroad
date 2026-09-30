@@ -6,7 +6,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { COMPANY_NAME } from "@/lib/constants";
 import { formatPrice, getMembershipPlan } from "@/lib/membership";
-import { createAlipayOrder, paymentIsConfigured } from "@/lib/paymentClient";
+import { createAlipayOrder, PaymentApiError, paymentIsConfigured } from "@/lib/paymentClient";
 import { useAccount } from "./AccountProvider";
 
 type SubmitState = "idle" | "loading" | "error";
@@ -45,9 +45,17 @@ export function CheckoutPanel() {
       const authHeaders = await getAuthHeaders();
       const order = await createAlipayOrder({ planId: plan.id }, authHeaders);
       window.location.assign(order.checkoutUrl);
-    } catch {
+    } catch (error) {
       setState("error");
-      setMessage("暂时无法创建订单，请稍后重试。系统没有产生扣款。");
+      if (error instanceof PaymentApiError && error.status === 401) {
+        setMessage("登录状态已过期，请重新登录后再继续付款。系统没有产生扣款。");
+        openAccount();
+      } else {
+        const reference = error instanceof PaymentApiError && error.requestId
+          ? ` 参考编号：${error.requestId}`
+          : "";
+        setMessage(`暂时无法创建订单，请稍后重试。系统没有产生扣款。${reference}`);
+      }
     }
   };
 

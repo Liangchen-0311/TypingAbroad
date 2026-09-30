@@ -30,9 +30,8 @@ export function getCloudbaseApp() {
 export async function getCloudbaseAuthHeaders(): Promise<Record<string, string>> {
   if (!cloudbaseAuthIsConfigured()) return {};
 
-  const { data, error } = await getCloudbaseApp().auth.getSession();
-  const accessToken = data.session?.access_token;
-  if (error || !accessToken) return {};
+  const { accessToken } = await getCloudbaseApp().auth.getAccessToken();
+  if (!accessToken) return {};
 
   return { Authorization: `Bearer ${accessToken}` };
 }

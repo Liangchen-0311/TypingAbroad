@@ -13,6 +13,17 @@ export type PaymentOrderStatus = "pending" | "paid" | "failed" | "closed";
 
 const paymentApiBase = process.env.NEXT_PUBLIC_PAYMENT_API_BASE?.replace(/\/$/, "") ?? "";
 
+export class PaymentApiError extends Error {
+  constructor(
+    readonly code: string,
+    readonly status: number,
+    readonly requestId: string,
+  ) {
+    super(code);
+    this.name = "PaymentApiError";
+  }
+}
+
 export function paymentIsConfigured() {
   return Boolean(paymentApiBase);
 }
@@ -21,6 +32,23 @@ function isPaymentOrder(value: unknown): value is PaymentOrder {
   if (!value || typeof value !== "object") return false;
   const candidate = value as Partial<PaymentOrder>;
   return typeof candidate.orderId === "string" && typeof candidate.checkoutUrl === "string";
+}
+
+async function throwPaymentApiError(response: Response, fallbackCode: string): Promise<never> {
+  let code = fallbackCode;
+  try {
+    const payload: unknown = await response.json();
+    if (payload && typeof payload === "object" && typeof (payload as { error?: unknown }).error === "string") {
+      code = (payload as { error: string }).error;
+    }
+  } catch {
+    // Preserve the fallback when the gateway does not return JSON.
+  }
+  throw new PaymentApiError(
+    code,
+    response.status,
+    response.headers.get("x-cloudbase-request-id") ?? response.headers.get("x-request-id") ?? "",
+  );
 }
 
 export async function createAlipayOrder(input: CreatePaymentOrderInput, authHeaders: Record<string, string>) {
@@ -35,7 +63,7 @@ export async function createAlipayOrder(input: CreatePaymentOrderInput, authHead
     },
     body: JSON.stringify(input),
   });
-  if (!response.ok) throw new Error("ORDER_CREATION_FAILED");
+  if (!response.ok) await throwPaymentApiError(response, "ORDER_CREATION_FAILED");
   const payload: unknown = await response.json();
   if (!isPaymentOrder(payload)) throw new Error("INVALID_ORDER_RESPONSE");
 
@@ -51,7 +79,7 @@ export async function getPaymentOrderStatus(orderId: string, authHeaders: Record
     headers: { Accept: "application/json", ...authHeaders },
     cache: "no-store",
   });
-  if (!response.ok) throw new Error("ORDER_STATUS_FAILED");
+  if (!response.ok) await throwPaymentApiError(response, "ORDER_STATUS_FAILED");
   const payload: unknown = await response.json();
   if (!payload || typeof payload !== "object") throw new Error("INVALID_ORDER_STATUS");
   const status = (payload as { status?: unknown }).status;

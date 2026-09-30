@@ -1,5 +1,7 @@
 "use strict";
 
+const { gunzipSync } = require("node:zlib");
+
 const MAX_BODY_BYTES = 64 * 1024;
 
 class HttpError extends Error {
@@ -42,17 +44,35 @@ function parseForm(body) {
   return Object.fromEntries(new URLSearchParams(body).entries());
 }
 
+function decodeCloudbaseContext(encoded) {
+  const bytes = Buffer.from(encoded, "base64");
+  const candidates = [bytes];
+
+  try {
+    candidates.push(gunzipSync(bytes));
+  } catch {
+    // CloudBase may send either plain or gzip-compressed Base64 context.
+  }
+
+  for (const candidate of candidates) {
+    try {
+      const context = JSON.parse(candidate.toString("utf8"));
+      if (context && typeof context === "object") return context;
+    } catch {
+      // Try the next supported encoding.
+    }
+  }
+
+  return null;
+}
+
 function parseCloudbaseUser(req) {
   const encoded = req.headers["x-cloudbase-context"];
   if (typeof encoded !== "string" || encoded.length > 16384) return null;
-  try {
-    const context = JSON.parse(Buffer.from(encoded, "base64").toString("utf8"));
-    const uid = context?.uid ?? context?.TCB_UUID;
-    if (typeof uid !== "string" || !/^[A-Za-z0-9_\-#@~=*(){}[\]:.,<>+]{4,128}$/.test(uid)) return null;
-    return { uid };
-  } catch {
-    return null;
-  }
+  const context = decodeCloudbaseContext(encoded);
+  const uid = context?.uid ?? context?.TCB_UUID ?? context?.userId ?? context?.user_id;
+  if (typeof uid !== "string" || !/^[A-Za-z0-9_#@~=*(){}[\]:.,<>+\-]{4,128}$/.test(uid)) return null;
+  return { uid };
 }
 
 function requestPath(req) {
@@ -83,6 +103,7 @@ function sendText(res, status, body) {
 
 module.exports = {
   HttpError,
+  decodeCloudbaseContext,
   parseCloudbaseUser,
   parseForm,
   readBody,
