@@ -10,7 +10,7 @@ import type {
   WordPracticeResult,
   WordPracticeSource,
 } from "./types";
-import { CUSTOM_PASSAGE_LIMIT } from "./customPassages";
+import { CUSTOM_PASSAGE_LIMIT, removeCustomPassageFromCollection } from "./customPassages";
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -53,6 +53,13 @@ export function saveCustomPassage(passage: CustomPassage) {
   }
   const next = [passage, ...current.filter((item) => item.id !== passage.id)];
   writeJson(STORAGE_KEYS.customPassages, next);
+  return next;
+}
+
+export function removeCustomPassage(passageId: string) {
+  const next = removeCustomPassageFromCollection(getCustomPassages(), passageId);
+  writeJson(STORAGE_KEYS.customPassages, next);
+  removeTypingDraft(passageId);
   return next;
 }
 

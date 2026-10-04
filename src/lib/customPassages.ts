@@ -98,3 +98,7 @@ export function getPracticeHref(articleId: string) {
   const parameter = isCustomPassageId(articleId) ? "custom" : "article";
   return `/practice?${parameter}=${encodeURIComponent(articleId)}`;
 }
+
+export function removeCustomPassageFromCollection(passages: CustomPassage[], passageId: string) {
+  return passages.filter((passage) => passage.id !== passageId);
+}

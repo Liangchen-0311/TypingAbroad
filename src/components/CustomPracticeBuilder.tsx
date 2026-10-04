@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, CheckCircle2, FileText, HardDrive, Pencil, Upload } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileText, HardDrive, Pencil, Trash2, Undo2, Upload } from "lucide-react";
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { MemberGate } from "./MemberGate";
 import { useMembership } from "./MembershipProvider";
@@ -17,7 +17,7 @@ import {
   getPracticeHref,
 } from "@/lib/customPassages";
 import { accessIsOpen } from "@/lib/membership";
-import { getCustomPassage, getCustomPassages, saveCustomPassage } from "@/lib/storage";
+import { getCustomPassage, getCustomPassages, removeCustomPassage, saveCustomPassage } from "@/lib/storage";
 import type { CustomPassage } from "@/lib/types";
 
 function formatEditedAt(value: string) {
@@ -36,6 +36,8 @@ export function CustomPracticeBuilder() {
   const [text, setText] = useState("");
   const [createdAt, setCreatedAt] = useState<string | undefined>();
   const [formError, setFormError] = useState<string | null>(null);
+  const [recentlyDeleted, setRecentlyDeleted] = useState<CustomPassage | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const memberAccess = accessIsOpen(membership, accessMode);
   const accessLoading = loading && accessMode !== "preview";
   const wordCount = useMemo(() => countCustomPassageWords(text), [text]);
@@ -116,6 +118,35 @@ export function CustomPracticeBuilder() {
     setFormError(null);
     router.replace(`/custom-practice?passage=${encodeURIComponent(passage.id)}`, { scroll: false });
     document.getElementById("custom-passage-title")?.focus({ preventScroll: true });
+  };
+
+  const deletePassage = (passage: CustomPassage) => {
+    try {
+      setPassages(removeCustomPassage(passage.id));
+      setRecentlyDeleted(passage);
+      setDeleteError(null);
+
+      if (editingId === passage.id) {
+        setTitle("");
+        setText("");
+        setCreatedAt(undefined);
+        setFormError(null);
+        router.replace("/custom-practice", { scroll: false });
+      }
+    } catch {
+      setDeleteError("This browser could not delete the passage. Check site storage permissions and try again.");
+    }
+  };
+
+  const undoDelete = () => {
+    if (!recentlyDeleted) return;
+    try {
+      setPassages(saveCustomPassage(recentlyDeleted));
+      setRecentlyDeleted(null);
+      setDeleteError(null);
+    } catch {
+      setDeleteError("This browser could not restore the passage. Free some storage and try again.");
+    }
   };
 
   return (
@@ -217,13 +248,25 @@ export function CustomPracticeBuilder() {
             </aside>
           </form>
 
-          {passages.length > 0 && (
+          {(passages.length > 0 || recentlyDeleted) && (
             <section className="custom-passage-library" aria-labelledby="your-passages-title">
               <div className="custom-practice-section-heading">
                 <div><span>Saved locally</span><h2 id="your-passages-title">Your passages</h2></div>
                 <Link className="text-button" href="/custom-practice">New passage</Link>
               </div>
-              <div>
+              {recentlyDeleted && (
+                <div className="custom-delete-notice" role="status" aria-live="polite">
+                  <div>
+                    <strong>“{recentlyDeleted.title}” deleted.</strong>
+                    <span>Its unfinished typing draft was removed. Completed results and mistake review remain.</span>
+                  </div>
+                  <button className="secondary-button" type="button" onClick={undoDelete}>
+                    <Undo2 aria-hidden="true" /> Undo
+                  </button>
+                </div>
+              )}
+              {deleteError && <p className="custom-delete-error" role="alert">{deleteError}</p>}
+              <div className="custom-passage-list">
                 {passages.map((passage) => (
                   <article key={passage.id} className="custom-passage-row">
                     <div>
@@ -233,6 +276,14 @@ export function CustomPracticeBuilder() {
                     <div>
                       <button className="quiet-action" type="button" onClick={() => loadPassage(passage)}><Pencil aria-hidden="true" /> Edit</button>
                       <Link className="text-button" href={getPracticeHref(passage.id)}>Practice <ArrowRight aria-hidden="true" /></Link>
+                      <button
+                        className="quiet-action custom-delete-button"
+                        type="button"
+                        aria-label={`Delete ${passage.title}`}
+                        onClick={() => deletePassage(passage)}
+                      >
+                        <Trash2 aria-hidden="true" /> Delete
+                      </button>
                     </div>
                   </article>
                 ))}

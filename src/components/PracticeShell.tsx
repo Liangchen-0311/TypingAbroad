@@ -165,8 +165,12 @@ export function PracticeShell() {
               <h1>Essay Practice</h1>
             </div>
             <div className="practice-heading__actions">
-              <Link className="quiet-action" href="/custom-practice"><FileUp aria-hidden="true" /> Import your text</Link>
-              <button className="quiet-action" type="button" onClick={randomArticle}><Shuffle aria-hidden="true" /> Random article</button>
+              <Link className="quiet-action practice-heading-action practice-heading-action--primary" href="/custom-practice">
+                <FileUp aria-hidden="true" /> Import your text
+              </Link>
+              <button className="quiet-action practice-heading-action practice-heading-action--secondary" type="button" onClick={randomArticle}>
+                <Shuffle aria-hidden="true" /> Random article
+              </button>
             </div>
           </div>
 

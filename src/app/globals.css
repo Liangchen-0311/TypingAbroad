@@ -948,6 +948,25 @@ button:disabled,
   padding-inline: var(--space-sm);
 }
 
+.practice-heading__actions .practice-heading-action {
+  min-height: 3rem;
+  padding-inline: var(--space-md);
+  border: var(--rule-hair) solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.practice-heading__actions .practice-heading-action--primary {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.practice-heading__actions .practice-heading-action--secondary {
+  background: transparent;
+  color: var(--color-accent);
+}
+
 .practice-heading p {
   overflow-wrap: anywhere;
 }
@@ -3569,8 +3588,46 @@ code {
   gap: var(--space-md);
 }
 
-.custom-passage-library > div:last-child {
+.custom-passage-list {
   border-block-start: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.custom-delete-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-block: var(--space-md);
+  border-block: var(--rule-hair) solid var(--color-rule);
+}
+
+.custom-delete-notice > div {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-2xs);
+}
+
+.custom-delete-notice strong {
+  overflow-wrap: anywhere;
+}
+
+.custom-delete-notice span {
+  color: var(--color-neutral);
+  font-size: var(--text-sm);
+}
+
+.custom-delete-error {
+  color: var(--color-error);
+  font-size: var(--text-sm);
+}
+
+.custom-delete-button {
+  color: var(--color-neutral);
+}
+
+.custom-delete-button svg {
+  color: var(--color-error);
 }
 
 .custom-passage-row {
@@ -3676,6 +3733,23 @@ code {
 
   .passage-chooser__toggle:hover svg {
     color: currentColor;
+  }
+
+  .practice-heading__actions .practice-heading-action--primary:hover {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    transform: translateY(-1px);
+  }
+
+  .practice-heading__actions .practice-heading-action--secondary:hover {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  .custom-delete-button:hover {
+    background: var(--color-error-soft);
+    color: var(--color-error);
   }
 
   .custom-file-action:hover {
