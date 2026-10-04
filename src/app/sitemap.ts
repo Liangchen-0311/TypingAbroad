@@ -6,6 +6,7 @@ export const dynamic = "force-static";
 const routes = [
   { path: "", changeFrequency: "weekly", priority: 1 },
   { path: "/practice", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/custom-practice", changeFrequency: "monthly", priority: 0.7 },
   { path: "/words", changeFrequency: "weekly", priority: 0.9 },
   { path: "/library", changeFrequency: "monthly", priority: 0.8 },
   { path: "/progress", changeFrequency: "monthly", priority: 0.5 },

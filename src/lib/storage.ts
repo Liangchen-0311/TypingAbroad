@@ -1,5 +1,6 @@
 import { STORAGE_KEYS } from "./constants";
 import type {
+  CustomPassage,
   SavedVocabulary,
   TypingDraft,
   TypingPreferences,
@@ -9,6 +10,7 @@ import type {
   WordPracticeResult,
   WordPracticeSource,
 } from "./types";
+import { CUSTOM_PASSAGE_LIMIT } from "./customPassages";
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -31,6 +33,27 @@ export function getActivePracticeArticle() {
 
 export function saveActivePracticeArticle(articleId: string) {
   writeJson(STORAGE_KEYS.activePracticeArticle, articleId);
+}
+
+export function getCustomPassages() {
+  return readJson<CustomPassage[]>(STORAGE_KEYS.customPassages, [])
+    .filter((passage) => passage.version === 1 && passage.id && passage.title && passage.text)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+export function getCustomPassage(passageId: string) {
+  return getCustomPassages().find((passage) => passage.id === passageId) ?? null;
+}
+
+export function saveCustomPassage(passage: CustomPassage) {
+  const current = getCustomPassages();
+  const isExisting = current.some((item) => item.id === passage.id);
+  if (!isExisting && current.length >= CUSTOM_PASSAGE_LIMIT) {
+    throw new Error("CUSTOM_PASSAGE_LIMIT_REACHED");
+  }
+  const next = [passage, ...current.filter((item) => item.id !== passage.id)];
+  writeJson(STORAGE_KEYS.customPassages, next);
+  return next;
 }
 
 export function getSessions() {

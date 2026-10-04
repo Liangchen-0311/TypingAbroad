@@ -27,5 +27,6 @@ export const STORAGE_KEYS = {
   wordPracticeCycles: "typeabroad:word-practice-cycles",
   wordPracticeResults: "typeabroad:word-practice-results",
   activePracticeArticle: "typeabroad:active-practice-article",
+  customPassages: "typeabroad:custom-passages",
   goal: "typeabroad:goal",
 } as const;

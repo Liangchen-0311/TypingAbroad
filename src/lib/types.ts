@@ -31,6 +31,16 @@ export interface Article {
   tags: string[];
 }
 
+export interface CustomPassage {
+  version: 1;
+  id: string;
+  title: string;
+  text: string;
+  wordCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface TypingError {
   expectedCharacter: string;
   typedCharacter: string;

@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 const comparison = [
   ["Essay practice", "6 selected samples", "Complete model essay library"],
+  ["Custom practice", "Not included", "Import your own passages"],
   ["Word practice", "2 categories · 10 words", "1,000+ words · every category"],
   ["Mistake review", "Up to 10 words", "Unlimited context recall"],
   ["Progress", "Latest 7 results", "Complete device history"],
@@ -38,7 +39,7 @@ export default function MembershipPage() {
         </div>
         <div className="membership-hero__copy">
           <h1>Practise without limits.</h1>
-          <p>Unlock the full library of high-scoring IELTS and TOEFL model essays, 1,000+ academic words, and deeper mistake review.</p>
+          <p>Unlock the full library of high-scoring IELTS and TOEFL model essays, import your own passages, and build deeper mistake review.</p>
           <Link className="primary-button" href="/checkout?plan=half-year">Choose six months <ArrowRight aria-hidden="true" /></Link>
           <small>一次付费 · 无自动续费 · 支付成功后自动开通 · 开通后不支持无理由退款</small>
         </div>

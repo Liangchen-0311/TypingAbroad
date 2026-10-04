@@ -30,6 +30,8 @@ export function LearningPanel({ article }: { article: Article }) {
     setSavedWords((current) => current.includes(id) ? current : [...current, id]);
   };
 
+  if (!article.vocabulary.length && !article.collocations.length && !article.sentenceStructures.length) return null;
+
   return (
     <section className="result-section learning-panel">
       <div className="result-section__heading">

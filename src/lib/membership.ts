@@ -71,6 +71,7 @@ export const FREE_PLAN_FEATURES = [
 
 export const MEMBER_PLAN_FEATURES = [
   "The complete IELTS, TOEFL and Academic English model essay library",
+  "Import and practise your own English passages",
   "All 1,000+ academic words and categories",
   "10, 20 and 40-word sessions",
   "Unlimited mistake review in original context",
@@ -79,6 +80,7 @@ export const MEMBER_PLAN_FEATURES = [
 
 export const MEMBER_PLAN_FEATURES_ZH = [
   "完整 IELTS、TOEFL 与 Academic English 范文库",
+  "导入自己的英文文章并使用完整打字练习引擎",
   "全部 1,000+ 学术写作单词与分类",
   "10、20 与 40 词练习 session",
   "不限数量的错词原句复习",

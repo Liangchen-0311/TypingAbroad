@@ -16,6 +16,7 @@ import { getTypingDraft, removeTypingDraft, saveTypingDraft, saveVocabularyItem 
 import { getEngineElapsedMs, initialEngineState, typingEngineReducer, type EngineState } from "@/lib/typingEngineState";
 import { writingWords } from "@/lib/writingWords";
 import { getChineseWordMeaning } from "@/lib/wordMeanings";
+import { getPracticeHref } from "@/lib/customPassages";
 import type { Article, SavedVocabulary, TypingDraft, TypingResult, WpmSample } from "@/lib/types";
 
 function normaliseWord(word: string) {
@@ -44,7 +45,7 @@ function createMistakeVocabulary(article: Article, word: string, position: numbe
     mistakeContext,
     sourceArticleId: article.id,
     sourceTitle: article.title,
-    sourceHref: `/practice?article=${article.id}`,
+    sourceHref: getPracticeHref(article.id),
     savedFromMistake: true,
     mistakeCount: 1,
     learned: false,

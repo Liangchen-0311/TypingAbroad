@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { articles } from "@/lib/articles";
+import { customPassageToArticle, getPracticeHref } from "@/lib/customPassages";
 import { calculatePracticeStreak, summarizeWordCategories, summarizeWordPractice } from "@/lib/progress";
-import { getGoal, getSessions, getTypingDrafts, getWordPracticeResults, saveGoal } from "@/lib/storage";
+import { getCustomPassages, getGoal, getSessions, getTypingDrafts, getWordPracticeResults, saveGoal } from "@/lib/storage";
 import { FREE_PROGRESS_RESULT_LIMIT, accessIsOpen } from "@/lib/membership";
 import { useMembership } from "./MembershipProvider";
-import type { TypingDraft, TypingResult, WordPracticeResult } from "@/lib/types";
+import type { Article, TypingDraft, TypingResult, WordPracticeResult } from "@/lib/types";
 
 type ProgressView = "articles" | "words";
 type Range = 7 | 30 | "all";
@@ -69,6 +70,7 @@ export function ProgressDashboard() {
   const [sessions, setSessions] = useState<TypingResult[]>([]);
   const [wordSessions, setWordSessions] = useState<WordPracticeResult[]>([]);
   const [drafts, setDrafts] = useState<TypingDraft[]>([]);
+  const [customArticles, setCustomArticles] = useState<Article[]>([]);
   const [view, setView] = useState<ProgressView>("articles");
   const [range, setRange] = useState<Range>(30);
   const [goal, setGoalState] = useState(60);
@@ -82,6 +84,7 @@ export function ProgressDashboard() {
     setSessions(articleResults);
     setWordSessions(wordResults);
     setDrafts(Object.values(getTypingDrafts()).sort((a, b) => b.savedAt.localeCompare(a.savedAt)));
+    setCustomArticles(getCustomPassages().map(customPassageToArticle));
     setGoalState(getGoal());
 
     const latestArticle = articleResults[0]?.createdAt ?? "";
@@ -89,7 +92,10 @@ export function ProgressDashboard() {
     if (latestWord && latestWord >= latestArticle) setView("words");
   }, []);
 
-  const articleById = useMemo(() => new Map(articles.map((article) => [article.id, article])), []);
+  const articleById = useMemo(
+    () => new Map([...articles, ...customArticles].map((article) => [article.id, article])),
+    [customArticles],
+  );
   const accessibleSessions = useMemo(
     () => fullProgressAccess ? sessions : sessions.slice(0, FREE_PROGRESS_RESULT_LIMIT),
     [fullProgressAccess, sessions],
@@ -145,7 +151,7 @@ export function ProgressDashboard() {
                         <span>{formatDuration(draft.elapsedMs / 1_000)}</span>
                       </div>
                       <div className="progress-draft-track" aria-label={`${Math.round(percent)} percent complete`}><span style={{ transform: `scaleX(${percent / 100})` }} /></div>
-                      <Link className="text-button" href={`/practice?article=${draft.articleId}`}>Continue</Link>
+                      <Link className="text-button" href={getPracticeHref(draft.articleId)}>Continue</Link>
                     </article>
                   );
                 })}

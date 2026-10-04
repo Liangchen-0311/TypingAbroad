@@ -13,9 +13,10 @@ interface ResultsViewProps {
   previousBest: number;
   onAgain: () => void;
   onNext: () => void;
+  nextLabel?: string;
 }
 
-export function ResultsView({ article, result, previousBest, onAgain, onNext }: ResultsViewProps) {
+export function ResultsView({ article, result, previousBest, onAgain, onNext, nextLabel = "Next article" }: ResultsViewProps) {
   const isRecord = result.wpm > previousBest;
 
   return (
@@ -42,7 +43,7 @@ export function ResultsView({ article, result, previousBest, onAgain, onNext }: 
           {isRecord ? <Trophy aria-label="New record" /> : <span>Previous {previousBest || "—"}</span>}
         </div>
         <div className="result-actions">
-          <button className="primary-button" type="button" onClick={onNext}>Next article <ArrowRight aria-hidden="true" /></button>
+          <button className="primary-button" type="button" onClick={onNext}>{nextLabel} <ArrowRight aria-hidden="true" /></button>
           <button className="secondary-button" type="button" onClick={onAgain}><RefreshCw aria-hidden="true" /> Practice again</button>
           <button className="text-button" type="button" onClick={() => document.getElementById("mistake-analysis")?.scrollIntoView({ behavior: "smooth" })}>
             <Search aria-hidden="true" /> Review mistakes
